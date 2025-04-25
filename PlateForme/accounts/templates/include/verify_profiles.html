@@ -1,0 +1,45 @@
+{% block content %}
+  <h2>Profils à vérifier</h2>
+
+  <ul>
+    {% for Personne in profiles %}
+      <li>
+        <strong>{{ Personne.user.username }}</strong> - {{ profile.user.email }}
+
+        {% if Personne.specialite_medicale %}
+          <p><strong>Spécialité :</strong> {{ Personne.specialite_medicale }}</p>
+
+          {% if Personne.agrement %}
+            <p>
+              <strong>Licence médicale :</strong>
+              <a href="{{ Personne.agrement.url }}" target="_blank">Voir le fichier</a>
+            </p>
+          {% endif %}
+
+          <form method="post" action="{% url 'approve_profile' Personne.id 'medecin' %}">
+            {% csrf_token %}
+            <button type="submit">Approuver comme Médecin</button>
+          </form>
+          <a href="{% url 'reject_profile' Personne.id %}">Refuser</a>
+
+        {% elif Personne.registre_commerce %}
+          <p><strong>Nom de la pharmacie :</strong> {{ Personne.nom_pharmacie }}</p>
+
+          <p>
+            <strong>Registre de commerce :</strong>
+            <a href="{{ Personne.registre_commerce.url }}" target="_blank">Voir le fichier</a>
+          </p>
+
+          <form method="post" action="{% url 'approve_profile' Personne.id 'pharmacie' %}">
+            {% csrf_token %}
+            <button type="submit">Approuver comme Pharmacie</button>
+          </form>
+          <a href="{% url 'reject_profile' Personne.id %}">Refuser</a>
+
+        {% else %}
+          <p><em>Aucun justificatif fourni.</em></p>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

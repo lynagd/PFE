@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Détail du Produit</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+
+        .container {
+            display: flex;
+            padding: 2rem;
+        }
+
+        .image-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .image-container img {
+            width: 90%;
+            max-width: 400px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .info-container {
+            flex: 1;
+            padding: 2rem;
+        }
+
+        .info-container h2 {
+            margin-top: 0;
+        }
+
+        .stars {
+            color: gold;
+            font-size: 1.5rem;
+        }
+
+        .buttons {
+            margin-top: 2rem;
+        }
+
+        .buttons button {
+            padding: 0.7rem 1.2rem;
+            margin-right: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 5px;
+            border: none;
+        }
+
+        .add-btn {
+            background-color: #3a8ebf;
+            color: white;
+        }
+
+        .back-btn {
+            background-color: #ccc;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Image du produit -->
+    <div class="image-container">
+        {% if produit.image %}
+            <img src="{{ produit.image.url }}" alt="{{ produit.nom }}">
+        {% else %}
+            <div style="width: 90%; height: 300px; background-color: #eee; display: flex; align-items: center; justify-content: center; color: #aaa; border-radius: 8px;">
+                Pas d'image
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Détails -->
+    <div class="info-container">
+        <h2>{{ produit.nom }}</h2>
+        <p><strong>Marque :</strong> {{ produit.marque }}</p>
+        <p><strong>Catégorie :</strong> {{ produit.categorie }}</p>
+        <p><strong>Prix :</strong> {{ produit.prix }} DZD</p>
+        <p><strong>Évaluation :</strong>
+            <span class="stars">
+                {% for i in "12345" %}
+                    {% if produit.evaluation|float >= i %}
+                        ★
+                    {% else %}
+                        ☆
+                    {% endif %}
+                {% endfor %}
+            </span>
+        </p>
+
+        <div class="buttons">
+            <button class="add-btn">Ajouter au panier</button>
+            <button class="back-btn" onclick="history.back()">Retour</button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

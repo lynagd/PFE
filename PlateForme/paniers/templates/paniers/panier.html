@@ -1,0 +1,39 @@
+<h2>Votre panier</h2>
+
+<table style="width:100%; border-collapse: collapse;">
+    <thead>
+        <tr style="background-color: #f2f2f2;">
+            <th style="padding: 10px; border: 1px solid #ddd;">Produit</th>
+            <th style="padding: 10px; border: 1px solid #ddd;">Quantité</th>
+            <th style="padding: 10px; border: 1px solid #ddd;">Prix</th>
+            <th style="padding: 10px; border: 1px solid #ddd;">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ligne in lignes %}
+        <tr>
+            <td style="padding: 10px; border: 1px solid #ddd;">{{ ligne.produit.nom }}</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">
+                <form method="post" action="{% url 'modifier_quantite' ligne.id %}">
+                    {% csrf_token %}
+                    <input type="number" name="quantite" value="{{ ligne.quantite }}" min="1">
+                    <button type="submit">Modifier</button>
+                </form>
+            </td>
+            <td style="padding: 10px; border: 1px solid #ddd;">{{ ligne.produit.prix }} DZD</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">
+                <form method="post" action="{% url 'supprimer_du_panier' ligne.id %}">
+                    {% csrf_token %}
+                    <button type="submit" style="background-color: red; color: white;">Supprimer</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<br>
+
+<form method="get" action="{% url 'chercher_pharmacie' %}">
+    <button type="submit">Chercher produits dans pharmacie</button>
+</form>

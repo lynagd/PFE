@@ -1,0 +1,27 @@
+{% block content %}
+<div class="container">
+    <h2>Inscription</h2>
+
+    <div class="mb-3">
+        <label class="form-label">Je suis :</label>
+        <div class="btn-group" role="group">
+            <a href="?role=client" class="btn {% if role == 'client' %}btn-primary{% else %}btn-outline-primary{% endif %}">Client</a>
+            <a href="?role=pharmacie" class="btn {% if role == 'pharmacie' %}btn-primary{% else %}btn-outline-primary{% endif %}">Pharmacie</a>
+            <a href="?role=medecin" class="btn {% if role == 'medecin' %}btn-primary{% else %}btn-outline-primary{% endif %}">Médecin</a>
+        </div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- CHAMP CACHÉ POUR ENVOYER LE ROLE -->
+        <input type="hidden" name="role" value="{{ role }}">
+
+        {{ form.as_p }}
+        
+        <button type="submit" class="btn btn-primary">S'inscrire</button>
+    </form>
+
+    <p class="mt-3">Déjà un compte ? <a href="{% url 'login' %}">Connectez-vous</a></p>
+</div>
+{% endblock %}

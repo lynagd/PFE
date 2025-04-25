@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Détail Médicament</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            padding: 2rem;
+        }
+
+        .image-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .image-container img {
+            width: 90%;
+            max-width: 400px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .info-container {
+            flex: 1;
+            padding: 2rem;
+        }
+
+        .info-container h2 {
+            margin-top: 0;
+        }
+
+        .info-container p {
+            margin: 0.5rem 0;
+        }
+
+        .buttons {
+            margin-top: 2rem;
+        }
+
+        .buttons button {
+            padding: 0.7rem 1.2rem;
+            margin-right: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 5px;
+            border: none;
+        }
+
+        .add-btn {
+            background-color: #3a8ebf;
+            color: white;
+        }
+
+        .back-btn {
+            background-color: #ccc;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Image médicament -->
+    <div class="image-container">
+        {% if medicament.image %}
+            <img src="{{ medicament.image.url }}" alt="{{ medicament.nom }}">
+        {% else %}
+            <div style="width: 90%; height: 300px; background-color: #eee; display: flex; align-items: center; justify-content: center; color: #aaa; border-radius: 8px;">
+                Pas d'image
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Infos médicament -->
+    <div class="info-container">
+        <h2>{{ medicament.nom }}</h2>
+        <p><strong>Laboratoire :</strong> {{ medicament.laboratoire }}</p>
+        <p><strong>Catégorie :</strong> {{ medicament.categorie }}</p>
+        <p><strong>Dosage :</strong> {{ medicament.dosage }}</p>
+        <p><strong>Forme :</strong> {{ medicament.forme_pharmaceutique }}</p>
+        <p><strong>Molécule active :</strong> {{ medicament.molecule_active }}</p>
+        <p><strong>Prix :</strong> {{ medicament.prix }} DZD</p>
+        <p><strong>Prescription obligatoire :</strong> 
+            {% if medicament.prescription_obligatoire %}Oui{% else %}Non{% endif %}
+        </p>
+        <p><strong>Remboursable :</strong> 
+            {% if medicament.remboursement %}Oui{% else %}Non{% endif %}
+        </p>
+        <p><strong>Description :</strong><br> {{ medicament.description }}</p>
+        <p><strong>Avertissements :</strong><br> {{ medicament.avertissements }}</p>
+        <p><strong>Notice :</strong><br> {{ medicament.notice }}</p>
+
+        <div class="buttons">
+            <button class="add-btn">Ajouter au panier</button>
+            <button class="back-btn" onclick="history.back()">Retour</button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

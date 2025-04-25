@@ -1,0 +1,18 @@
+
+{% block title %}Dashboard Pharmacie{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Dashboard Pharmacie</h2>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Lien d'invitation pour livreur</h5>
+            <p>Copiez et envoyez ce lien à votre livreur :</p>
+            <div class="alert alert-info">
+                <code>{{ invitation_link }}</code>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+
+{% block content %}
+<div class="container">
+    <h2>Inviter un livreur</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="email">Email du livreur</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Envoyer l'invitation</button>
+    </form>
+</div>
+{% endblock %}
