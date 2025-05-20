@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de bord - Pharmacie</title>
+    <style>
+        .invitation-section {
+            margin-top: 20px;
+        }
+        .invitation-link {
+            display: inline-block;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            margin: 0 10px;
+        }
+        .btn {
+            padding: 8px 16px;
+            margin: 5px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+        }
+        .btn-regenerate {
+            background-color: #ff9800;
+            color: white;
+        }
+        .btn-copy {
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tableau de bord de la pharmacie : {{ pharmacie.nom_pharmacie }}</h1>
+
+    <!-- Afficher les messages (par exemple, "Lien d'invitation régénéré avec succès") -->
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Section pour le lien d'invitation -->
+    <div class="invitation-section">
+        <h2>Inviter un livreur</h2>
+        <form method="post" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" name="regenerate_token" class="btn btn-regenerate">Régénérer</button>
+        </form>
+        <span class="invitation-link" id="invitationLink">{{ invitation_link }}</span>
+        <button class="btn btn-copy" onclick="copyLink()">Copier</button>
+    </div>
+
+    <script>
+        function copyLink() {
+            // Sélectionner le lien
+            const linkElement = document.getElementById('invitationLink');
+            const linkText = linkElement.textContent;
+
+            // Copier le lien dans le presse-papiers
+            navigator.clipboard.writeText(linkText).then(() => {
+                alert('Lien copié dans le presse-papiers !');
+            }).catch(err => {
+                console.error('Erreur lors de la copie : ', err);
+                alert('Erreur lors de la copie du lien.');
+            });
+        }
+    </script>
+</body>
+</html>

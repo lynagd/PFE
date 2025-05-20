@@ -1,0 +1,130 @@
+.pharmacy-dashboard-container {
+  background: #fff;
+  color: #222;
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  padding: 48px 48px 36px 48px;
+  border-radius: 18px;
+  width: 850px;
+  max-width: 98vw;
+  margin: 80px auto;
+  box-shadow: 0 8px 32px #3d5a4012;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  color: #3d5a40;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 28px;
+  text-align: center;
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+}
+
+h1 span {
+  color: #b7b7b7;
+  font-weight: 700;
+}
+
+h2 {
+  color: #257a3e;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 18px;
+  text-align: left;
+}
+
+.invitation-section {
+  margin-top: 32px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+
+.invitation-label {
+  white-space: nowrap;
+  font-size: 1rem;
+  color: #3d5a40;
+  font-weight: 600;
+  margin-bottom: 0;
+  margin-right: 0;
+  padding: 0 4px;
+  line-height: 48px;
+}
+
+.invitation-link {
+  height: 48px;
+  padding: 0 18px;
+  border: 1.5px solid #b7b7b7;
+  background-color: #f8faf8;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #3d5a40;
+  min-width: 270px;
+  max-width: 350px;
+  box-sizing: border-box;
+  flex: 1;
+  margin: 0 0;
+  line-height: 48px;
+  font-family: inherit;
+}
+
+.btn, .btn-regenerate, .btn-copy {
+  height: 48px;
+  padding: 0 28px;
+  margin: 0;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+}
+
+.btn-regenerate {
+  background-color: #b7b7b7;
+  color: #fff;
+}
+
+.btn-regenerate:hover {
+  background-color: #3d5a40;
+}
+
+.btn-copy {
+  background: #3d5a40;
+  color: #fff;
+}
+
+.btn-copy:hover {
+  background: #2d3d2a;
+}
+
+.messages {
+  width: 100%;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.messages .success {
+  color: #3d5a40;
+  background: #f8faf8;
+  border-radius: 6px;
+  padding: 8px;
+  margin-bottom: 6px;
+}
+
+.messages .error {
+  color: #c62828;
+  background: #ffebee;
+  border-radius: 6px;
+  padding: 8px;
+  margin-bottom: 6px;
+}

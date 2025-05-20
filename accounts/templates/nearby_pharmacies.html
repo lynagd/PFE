@@ -1,0 +1,468 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmacies à proximité</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        #map { height: 500px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container my-4">
+        <h1 class="text-center mb-4">Pharmacies à proximité</h1>
+
+        <!-- Section de géolocalisation -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <button id="toggleGeolocationBtn" class="btn btn-primary mb-2">
+                    Activer la géolocalisation
+                </button>
+                <p id="locationStatus" class="text-muted">Position non détectée.</p>
+                <p id="locationAccuracy" class="text-muted"></p>
+
+                <div class="mb-3">
+                    <label for="manualAddress" class="form-label">Ou entrez une adresse manuellement :</label>
+                    <input type="text" id="manualAddress" class="form-control" placeholder="Ex: Cité 5 Juillet 1962, Bab Ezzouar, Alger, Algérie">
+                    <button onclick="geocodeAddress()" class="btn btn-success mt-2">
+                        Valider
+                    </button>
+                </div>
+
+                <!-- Filtres -->
+                <div class="mb-3">
+                    <label for="maxDistance" class="form-label">Distance maximale (km) :</label>
+                    <input type="number" id="maxDistance" value="10" min="1" class="form-control d-inline-block w-auto">
+                    <div class="form-check d-inline-block ms-3">
+                        <input type="checkbox" id="openNow" class="form-check-input">
+                        <label for="openNow" class="form-check-label">Pharmacies ouvertes maintenant</label>
+                    </div>
+                    <button onclick="applyFilters()" class="btn btn-primary ms-3">
+                        Appliquer les filtres
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carte -->
+        <div id="map"></div>
+
+        <!-- Liste des pharmacies -->
+        <div class="card mt-4">
+            <div class="card-body">
+                <h2 class="card-title">Pharmacies à proximité</h2>
+                <ul id="pharmaciesListItems" class="list-group list-group-flush"></ul>
+            </div>
+        </div>
+
+        <!-- Lien pour retourner à l'accueil -->
+        <div class="text-center mt-4">
+            <a href="{% url 'accounts:home' %}" class="btn btn-link">Retour à l'accueil</a>
+            <a href="{% url 'account_logout' %}">Se déconnecter</a>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    
+    <!-- Passage des données Django vers JavaScript -->
+    <script>
+        const pharmacies = [
+            {% for pharmacie in pharmacies %}
+                {
+                    id: {{ pharmacie.personne.id|default:"0" }},
+                    name: "{{ pharmacie.nom_pharmacie|escapejs|default:"Nom inconnu" }}",
+                    lat: {{ pharmacie.latitude|default:"null" }},
+                    lng: {{ pharmacie.longitude|default:"null" }},
+                    address: "{{ pharmacie.localisation|escapejs|default:"Adresse inconnue" }}",
+                    hours: "{{ pharmacie.heure_ouverture|time:'H:i'|default:'00:00' }} - {{ pharmacie.heure_fermeture|time:'H:i'|default:'00:00' }}",
+                    phone: "{{ pharmacie.personne.num_tel|default:"Non disponible" }}"
+                }{% if not forloop.last %},{% endif %}
+            {% empty %}
+                // Aucune pharmacie disponible
+            {% endfor %}
+        ];
+        
+        const pharmacyProfileUrl = "{% url 'accounts:pharmacy_profile' 0 %}";
+        console.log("Pharmacies chargées :", pharmacies);
+    </script>
+    
+    <!-- Logique JavaScript -->
+    <script>
+        let map;
+        let markers = [];
+        let userMarker;
+        let userPosition = null;
+        let watchId = null;
+
+        // Initialisation de la carte
+        function initMap() {
+            map = L.map('map').setView([28.0339, 1.6596], 5);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+            updateMapMarkers(pharmacies);
+        }
+
+        // Mise à jour des marqueurs des pharmacies
+        function updateMapMarkers(filteredPharmacies) {
+            markers.forEach(marker => marker.remove());
+            markers = [];
+            if (!filteredPharmacies || filteredPharmacies.length === 0) {
+                console.log("Aucune pharmacie à afficher sur la carte.");
+                document.getElementById('pharmaciesListItems').innerHTML = '<li class="list-group-item">Aucune pharmacie disponible.</li>';
+                return;
+            }
+            filteredPharmacies.forEach((pharmacy) => {
+                if (pharmacy.lat && pharmacy.lng && !isNaN(pharmacy.lat) && !isNaN(pharmacy.lng)) {
+                    const popupContent = `
+                        <h3>${pharmacy.name}</h3>
+                        <p><strong>Adresse :</strong> ${pharmacy.address}</p>
+                        <p><strong>Horaires :</strong> ${pharmacy.hours}</p>
+                        <p><strong>Téléphone :</strong> ${pharmacy.phone}</p>
+                        <button onclick="showRoute(${pharmacy.lat}, ${pharmacy.lng})" class="btn btn-primary btn-sm mt-2">Voir l'itinéraire</button>
+                        <br>
+                        <a href="#" onclick="window.location.href=pharmacyProfileUrl.replace('0', '${pharmacy.id}');" class="btn btn-link mt-2">Voir le profil</a>
+                    `;
+                    const marker = L.marker([pharmacy.lat, pharmacy.lng])
+                        .addTo(map)
+                        .bindPopup(popupContent);
+                    marker.on('click', () => {
+                        map.setView([pharmacy.lat, pharmacy.lng], 15);
+                    });
+                    markers.push(marker);
+                    console.log(`Marqueur ajouté pour ${pharmacy.name} à lat=${pharmacy.lat}, lng=${pharmacy.lng}`);
+                } else {
+                    console.log(`Coordonnées invalides pour ${pharmacy.name}`);
+                }
+            });
+            if (markers.length > 0) {
+                const group = L.featureGroup(markers);
+                map.fitBounds(group.getBounds().pad(0.5));
+            } else {
+                console.log("Aucun marqueur valide à afficher.");
+            }
+        }
+
+        // Mise à jour de la position de l'utilisateur
+        function updateUserPosition(lat, lng, source, accuracy) {
+            userPosition = { lat, lng };
+            const status = document.getElementById('locationStatus');
+            const accuracyStatus = document.getElementById('locationAccuracy');
+            status.textContent = `Position (${source}) : Latitude ${lat.toFixed(4)}, Longitude ${lng.toFixed(4)}`;
+            accuracyStatus.textContent = accuracy ? `Précision : ±${accuracy.toFixed(2)} mètres` : '';
+            if (accuracy && accuracy > 100) {
+                alert("La précision de votre position est faible (±" + accuracy.toFixed(2) + " mètres). Essayez d'activer le GPS ou de vous déplacer à l'extérieur.");
+            }
+            const redIcon = L.icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34]
+            });
+            if (userMarker) {
+                userMarker.setLatLng([lat, lng]);
+            } else {
+                userMarker = L.marker([lat, lng], { icon: redIcon })
+                    .addTo(map)
+                    .bindPopup("Votre position");
+            }
+            map.setView([lat, lng], 12);
+            calculateDistances();
+            updateMapMarkers(pharmacies);
+        }
+
+        // Gestion de la géolocalisation
+        document.getElementById('toggleGeolocationBtn').addEventListener('click', function() {
+            const status = document.getElementById('locationStatus');
+            const accuracyStatus = document.getElementById('locationAccuracy');
+            const toggleBtn = document.getElementById('toggleGeolocationBtn');
+            if (watchId === null) {
+                if (navigator.geolocation) {
+                    status.textContent = "Récupération de votre position...";
+                    toggleBtn.textContent = "Désactiver la géolocalisation";
+                    const geoOptions = {
+                        enableHighAccuracy: true,
+                        timeout: 15000,
+                        maximumAge: 0
+                    };
+                    const success = (position) => {
+                        console.log("Position reçue :", position);
+                        const accuracy = position.coords.accuracy;
+                        updateUserPosition(
+                            position.coords.latitude,
+                            position.coords.longitude,
+                            "Géolocalisation",
+                            accuracy
+                        );
+                    };
+                    const error = (error) => {
+                        console.error("Erreur de géolocalisation :", error);
+                        switch(error.code) {
+                            case error.PERMISSION_DENIED:
+                                status.textContent = "Vous avez refusé de partager votre position. Saisissez une adresse manuellement.";
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                status.textContent = "Les informations de localisation ne sont pas disponibles.";
+                                break;
+                            case error.TIMEOUT:
+                                status.textContent = "La demande de localisation a expiré. Vérifiez votre connexion ou essayez une adresse manuelle.";
+                                break;
+                            default:
+                                status.textContent = "Erreur : " + error.message;
+                        }
+                        accuracyStatus.textContent = '';
+                        toggleBtn.textContent = "Activer la géolocalisation";
+                        watchId = null;
+                    };
+                    watchId = navigator.geolocation.watchPosition(success, error, geoOptions);
+                } else {
+                    status.textContent = "La géolocalisation n'est pas prise en charge par votre navigateur.";
+                }
+            } else {
+                navigator.geolocation.clearWatch(watchId);
+                watchId = null;
+                toggleBtn.textContent = "Activer la géolocalisation";
+                status.textContent = "Géolocalisation désactivée.";
+                accuracyStatus.textContent = '';
+                if (userMarker) {
+                    userMarker.remove();
+                    userMarker = null;
+                }
+                document.getElementById('pharmaciesListItems').innerHTML = '';
+                updateMapMarkers(pharmacies);
+            }
+        });
+
+        // Géocodage de l'adresse manuelle
+        function geocodeAddress() {
+            if (watchId !== null) {
+                navigator.geolocation.clearWatch(watchId);
+                watchId = null;
+                document.getElementById('toggleGeolocationBtn').textContent = "Activer la géolocalisation";
+                console.log("Géolocalisation désactivée pour la saisie manuelle.");
+            }
+            const address = document.getElementById('manualAddress').value;
+            const status = document.getElementById('locationStatus');
+            if (!address) {
+                status.textContent = "Veuillez entrer une adresse valide.";
+                return;
+            }
+            const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1`;
+            console.log("Requête Nominatim :", url);
+            fetch(url, {
+                headers: {
+                    'User-Agent': 'PharmacyLocator/1.0 (sirinesaad98@gmail.com)'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP : ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Réponse Nominatim :", data);
+                if (data && data.length > 0) {
+                    const lat = parseFloat(data[0].lat);
+                    const lng = parseFloat(data[0].lon);
+                    updateUserPosition(lat, lng, "Saisie manuelle", null);
+                } else {
+                    status.textContent = "Adresse non trouvée.";
+                }
+            })
+            .catch(error => {
+                console.error("Erreur lors de la conversion de l'adresse :", error);
+                status.textContent = "Erreur : " + error.message;
+            });
+        }
+
+        // Calcul des distances
+        function calculateDistances() {
+            const list = document.getElementById('pharmaciesListItems');
+            list.innerHTML = '';
+            if (!userPosition) {
+                console.log("Aucune position utilisateur disponible.");
+                updateMapMarkers(pharmacies);
+                return;
+            }
+            console.log("Calcul des distances pour les pharmacies...");
+            const pharmacyDistances = pharmacies
+                .filter(pharmacy => {
+                    const hasValidCoords = pharmacy.lat && pharmacy.lng && !isNaN(pharmacy.lat) && !isNaN(pharmacy.lng);
+                    if (!hasValidCoords) {
+                        console.log(`Coordonnées invalides pour ${pharmacy.name}`);
+                    }
+                    return hasValidCoords;
+                })
+                .map(pharmacy => {
+                    const distance = haversineDistance(userPosition.lat, userPosition.lng, pharmacy.lat, pharmacy.lng);
+                    const duration = Math.round((distance / 50) * 60);
+                    console.log(`Distance pour ${pharmacy.name} : ${distance} km`);
+                    return {
+                        pharmacy: pharmacy,
+                        distance: distance,
+                        distanceText: distance.toFixed(2) + " km",
+                        duration: duration + " min"
+                    };
+                });
+            applyFilters(pharmacyDistances);
+        }
+
+        // Formule de Haversine
+        function haversineDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            const distance = R * c;
+            console.log(`Haversine : lat1=${lat1}, lon1=${lon1}, lat2=${lat2}, lon2=${lon2}, distance=${distance} km`);
+            return distance;
+        }
+
+        // Affichage de l'itinéraire
+        function showRoute(destLat, destLng) {
+            if (!userPosition) {
+                alert("Veuillez activer la géolocalisation ou saisir une adresse.");
+                return;
+            }
+            const osmUrl = `https://www.openstreetmap.org/directions?engine=fossgis_osrm_car&route=${userPosition.lat},${userPosition.lng};${destLat},${destLng}`;
+            console.log("URL de l'itinéraire :", osmUrl);
+            window.open(osmUrl, '_blank');
+        }
+
+        // Application des filtres
+        function applyFilters(pharmacyDistances = null) {
+            const maxDistance = parseFloat(document.getElementById('maxDistance').value) || 1000;
+            const openNow = document.getElementById('openNow').checked;
+            const list = document.getElementById('pharmaciesListItems');
+            list.innerHTML = '';
+
+            console.log(`Filtres appliqués : Distance max = ${maxDistance} km, Ouvert maintenant = ${openNow}`);
+
+            let filteredPharmacies = pharmacyDistances || pharmacies.map(pharmacy => ({
+                pharmacy: pharmacy,
+                distance: userPosition && pharmacy.lat && pharmacy.lng
+                    ? haversineDistance(userPosition.lat, userPosition.lng, pharmacy.lat, pharmacy.lng)
+                    : Infinity,
+                distanceText: userPosition && pharmacy.lat && pharmacy.lng
+                    ? haversineDistance(userPosition.lat, userPosition.lng, pharmacy.lat, pharmacy.lng).toFixed(2) + " km"
+                    : 'N/A',
+                duration: userPosition && pharmacy.lat && pharmacy.lng
+                    ? Math.round((haversineDistance(userPosition.lat, userPosition.lng, pharmacy.lat, pharmacy.lng) / 50) * 60) + " min"
+                    : 'N/A'
+            }));
+
+            filteredPharmacies = filteredPharmacies.filter(({ pharmacy, distance }) => {
+                const withinDistance = distance <= maxDistance;
+                let isOpen = true;
+
+                if (openNow) {
+                    if (!pharmacy.hours || pharmacy.hours === "00:00 - 00:00" || !pharmacy.hours.includes('-')) {
+                        console.log(`${pharmacy.name} - Horaires invalides ou absents : "${pharmacy.hours}", considéré comme fermé`);
+                        isOpen = false;
+                    } else {
+                        try {
+                            console.log(`${pharmacy.name} - Horaires bruts : "${pharmacy.hours}"`);
+
+                            // Normaliser les horaires pour gérer HH:MM ou HH:MM:SS
+                            const normalizeTime = (time) => {
+                                // Supprimer les secondes si présentes
+                                return time.replace(/:(\d{2}:\d{2})(:\d{2})?$/, '$1');
+                            };
+                            const [openTime, closeTime] = pharmacy.hours.split('-').map(s => normalizeTime(s.trim()));
+
+                            // Parser avec une regex permissive
+                            const timeFormat = /^(\d{1,2}):(\d{2})$/;
+                            const openMatch = openTime.match(timeFormat);
+                            const closeMatch = closeTime.match(timeFormat);
+
+                            if (!openMatch || !closeMatch) {
+                                console.log(`${pharmacy.name} - Format d'horaires invalide : "${pharmacy.hours}", considéré comme fermé`);
+                                isOpen = false;
+                            } else {
+                                let openHour = parseInt(openMatch[1]);
+                                let openMinute = parseInt(openMatch[2]);
+                                let closeHour = parseInt(closeMatch[1]);
+                                let closeMinute = parseInt(closeMatch[2]);
+
+                                // Normaliser 00:00 comme minuit le lendemain
+                                if (closeHour === 0 && closeMinute === 0) {
+                                    closeHour = 24;
+                                }
+
+                                const openTimeMinutes = openHour * 60 + openMinute;
+                                const closeTimeMinutes = closeHour * 60 + closeMinute;
+
+                                // Obtenir l'heure actuelle (force UTC+1 pour l'Algérie)
+                                const now = new Date();
+                                // Ajuster pour UTC+1
+                                const currentHour = (now.getUTCHours() + 1) % 24;
+                                const currentMinute = now.getUTCMinutes();
+                                const currentTimeMinutes = currentHour * 60 + currentMinute;
+
+                                console.log(`${pharmacy.name} - Heure actuelle : ${currentHour}:${currentMinute.toString().padStart(2, '0')} (${currentTimeMinutes} min)`);
+                                console.log(`${pharmacy.name} - Ouverture : ${openHour.toString().padStart(2, '0')}:${openMinute.toString().padStart(2, '0')} (${openTimeMinutes} min)`);
+                                console.log(`${pharmacy.name} - Fermeture : ${closeHour.toString().padStart(2, '0')}:${closeMinute.toString().padStart(2, '0')} (${closeTimeMinutes} min)`);
+
+                                isOpen = currentTimeMinutes >= openTimeMinutes && currentTimeMinutes < closeTimeMinutes;
+                                console.log(`${pharmacy.name} - Ouvert : ${isOpen}`);
+                            }
+                        } catch (e) {
+                            console.error(`${pharmacy.name} - Erreur lors du traitement des horaires : ${e}, Horaires : "${pharmacy.hours}"`);
+                            isOpen = false;
+                        }
+                    }
+                }
+
+                console.log(`${pharmacy.name} - Distance : ${distance} km, Dans la plage : ${withinDistance}, Ouvert : ${isOpen}`);
+                return withinDistance && isOpen;
+            });
+
+            filteredPharmacies.sort((a, b) => a.distance - b.distance);
+
+            if (filteredPharmacies.length === 0) {
+                list.innerHTML = '<li class="list-group-item">Aucune pharmacie ne correspond aux critères. Vérifiez les horaires, la distance, ou l\'heure actuelle.</li>';
+            } else {
+                filteredPharmacies.forEach(({ pharmacy, distanceText, duration }) => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                    li.innerHTML = `
+                        <span><strong>${pharmacy.name}</strong> - Distance: ${distanceText}, Temps: ${duration}</span>
+                        <button onclick="showPharmacyDetails(${pharmacy.id})" class="btn btn-primary btn-sm">Voir les détails</button>
+                    `;
+                    list.appendChild(li);
+                });
+            }
+
+            updateMapMarkers(filteredPharmacies.map(item => item.pharmacy));
+        }
+
+        // Affichage des détails de la pharmacie
+        function showPharmacyDetails(pharmacyId) {
+            const pharmacy = pharmacies.find(p => p.id === pharmacyId);
+            if (pharmacy) {
+                const marker = markers.find(m => m.getPopup().getContent().includes(pharmacy.name));
+                if (marker) {
+                    marker.openPopup();
+                    map.setView([pharmacy.lat, pharmacy.lng], 15);
+                } else {
+                    console.log(`Aucun marqueur trouvé pour ${pharmacy.name}`);
+                }
+            }
+        }
+
+        window.onload = initMap;
+    </script>
+</body>
+</html>

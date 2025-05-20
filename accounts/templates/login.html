@@ -1,0 +1,23 @@
+{% load socialaccount %}
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-info">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+<h2>Connexion</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Se connecter</button>
+</form>
+<h3>Ou connectez-vous avec:</h3>
+<div class="social-login">
+    <a href="{% provider_login_url 'google' %}" class="btn btn-google">
+        <i class="fa fa-google"></i> Google
+    </a>
+    <a href="{% provider_login_url 'facebook' %}" class="btn btn-facebook">
+        <i class="fa fa-facebook"></i> Facebook
+    </a>
+</div><p>Pas encore de compte ? <a href="{% url 'accounts:register' %}">S'inscrire</a></p>

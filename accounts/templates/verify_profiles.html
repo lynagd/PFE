@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Profils à vérifier</h2>
+    {% if profiles %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Utilisateur</th>
+                    <th>Rôle</th>
+                    <th>Informations</th>
+                    <th>Documents</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for profile in profiles %}
+                    <tr>
+                        <td>{{ profile.personne.nom }} {{ profile.personne.prenom }}</td>
+                        <td>{{ profile.personne.get_role_display }}</td>
+                        <td>
+                            {% if profile.pending_data %}
+                                {% if profile.role == 'medecin' %}
+                                    <p><strong>Spécialité:</strong> {{ profile.pending_data.specialite_medicale }}</p>
+                                    <p><strong>Adresse:</strong> {{ profile.pending_data.addresse }}</p>
+                                {% elif profile.role == 'pharmacie' %}
+                                    <p><strong>Nom de la pharmacie:</strong> {{ profile.pending_data.nom_pharmacie }}</p>
+                                    <p><strong>Propriétaire:</strong> {{ profile.pending_data.nom_proprietaire }}</p>
+                                    <p><strong>Localisation:</strong> Lat: {{ profile.pending_data.latitude }}, Lng: {{ profile.pending_data.longitude }}</p>
+                                {% endif %}
+                            {% else %}
+                                Aucun détail fourni.
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if profile.pending_data %}
+                                {% if profile.role == 'medecin' %}
+                                    {% if profile.pending_data.agrement %}
+                                        <a href="{{ profile.pending_data.agrement.url }}" target="_blank">Voir l'agrément</a><br>
+                                    {% endif %}
+                                    {% if profile.pending_data.cachet %}
+                                        <a href="{{ profile.pending_data.cachet.url }}" target="_blank">Voir le cachet</a><br>
+                                    {% endif %}
+                                    {% if profile.pending_data.signature %}
+                                        <a href="{{ profile.pending_data.signature.url }}" target="_blank">Voir la signature</a>
+                                    {% else %}
+                                        Aucun justificatif fourni.
+                                    {% endif %}
+                                {% elif profile.role == 'pharmacie' %}
+                                    {% if profile.pending_data.registre_commerce %}
+                                        <a href="{{ profile.pending_data.registre_commerce.url }}" target="_blank">Voir le registre de commerce</a>
+                                    {% else %}
+                                        Aucun justificatif fourni.
+                                    {% endif %}
+                                {% endif %}
+                            {% else %}
+                                Aucun justificatif fourni.
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'accounts:approve_profile' profile.personne.id profile.role %}">Approuver</a>
+                            <a href="{% url 'accounts:reject_profile' profile.personne.id %}">Rejeter</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Aucun profil à vérifier.</p>
+    {% endif %}
+</body>
+</html>
+    

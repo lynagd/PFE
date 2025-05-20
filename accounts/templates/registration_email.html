@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenue !</title>
+</head>
+<body>
+    <h2>Bienvenue, {{ user.personne.prenom }} {{ user.personne.nom }} !</h2>
+    <p>Merci de vous être inscrit sur notre plateforme.</p>
+    <p>Vous pouvez maintenant vous connecter à votre compte ici : 
+        <a href="{{ protocol }}://{{ domain }}{% url 'accounts:login' %}">Se connecter</a>
+    </p>
+    <p>Si vous avez des questions, n’hésitez pas à nous contacter.</p>
+    <p>Cordialement,<br>L’équipe de la plateforme</p>
+</body>
+</html>

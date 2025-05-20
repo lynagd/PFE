@@ -1,0 +1,84 @@
+/* Reset some default browser styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Fonts */
+body {
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  background: #f5f3ef; /* Soft beige */
+  color: #222;
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  color: #2d2d2d;
+  font-weight: 700;
+  margin-bottom: 0.5em;
+}
+
+/* Remove link underline and set color */
+a {
+  color: #3d5a40;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Buttons */
+button, .btn {
+  font-family: inherit;
+  background: #3d5a40;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 22px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s;
+  box-shadow: 0 2px 8px #3d5a4022;
+}
+button:hover, .btn:hover {
+  background: #2d3d2a;
+}
+
+/* Inputs */
+input, select, textarea {
+  font-family: inherit;
+  border: 1.5px solid #b7b7b7;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  background: #fff;
+  margin-bottom: 10px;
+  transition: border 0.18s;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: #3d5a40;
+  outline: none;
+}
+
+/* Cards & Sections */
+.card, .section, .patient-card, .ordonnance-paper {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 16px #3d5a4012;
+  padding: 24px 28px 18px 28px;
+  margin-bottom: 24px;
+}
+
+/* Utility classes (optional) */
+.text-center { text-align: center; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-4 { margin-top: 1.5rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-4 { margin-bottom: 1.5rem; }

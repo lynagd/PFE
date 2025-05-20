@@ -1,0 +1,332 @@
+.nearby-bg {
+  min-height: 100vh;
+  background: #f5f3ef;
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+}
+
+.nearby-hero {
+  background: #3d5a40;
+  color: #fff;
+  border-radius: 0 0 64px 64px; /* slightly more rounded */
+  padding: 120px 0 140px 0;    /* more vertical space */
+  text-align: center;
+  box-shadow: 0 8px 32px #3d5a4012;
+  position: relative;
+  z-index: 2;
+  max-width: 900px;    /* Reduced width */
+  margin-left: auto;           /* center horizontally */
+  margin-right: auto;
+}
+
+.nearby-hero h1 {
+  font-size: 3rem;
+  font-weight: 900;
+  margin-bottom: 18px;
+  color: #fff;
+  letter-spacing: -1px;
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+}
+
+.nearby-hero span {
+  color: #b7b7b7;
+  font-weight: 900;
+}
+
+.nearby-hero p {
+  font-size: 1.3rem;
+  color: #e0ffe0;
+  margin-bottom: 0;
+  font-weight: 500;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 28px;
+  padding-left: 32px;   /* More horizontal space */
+  padding-right: 32px;  /* More horizontal space */
+  line-height: 1.6;     /* More readable */
+}
+
+.nearby-main {
+  max-width: 1600px;           /* Increased width */
+  margin: 48px auto 0 auto;    /* more top margin */
+  padding: 0 48px 48px 48px;   /* more side and bottom padding */
+  position: relative;
+  z-index: 3;
+}
+
+.nearby-controls {
+  background: #fff;
+  border-radius: 24px;         /* more rounded */
+  box-shadow: 0 8px 32px #3d5a4012;
+  padding: 48px 40px 32px 40px; /* more padding */
+  margin-bottom: 32px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  justify-content: space-between;
+}
+
+.geo-section {
+  flex: 2;
+  min-width: 320px;
+}
+
+.geo-section .btn-green {
+  background: #3d5a40;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 10px 22px;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+}
+
+.geo-section .btn-green:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.geo-status, .geo-accuracy {
+  display: block;
+  color: #3d5a40;
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+.manual-address {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.manual-address input {
+  flex: 1;
+  border: 1.5px solid #b7b7b7;
+  border-radius: 7px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.btn-green-outline {
+  background: #fff;
+  color: #3d5a40;
+  border: 2px solid #3d5a40;
+  border-radius: 7px;
+  padding: 8px 18px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.2s, color 0.2s;
+  font-family: inherit;
+}
+
+.btn-green-outline:hover {
+  background: #3d5a40;
+  color: #fff;
+}
+
+.filters-section {
+  flex: 1;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: center;
+}
+
+.filters-section label {
+  font-size: 1rem;
+  color: #3d5a40;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filters-section input[type="number"] {
+  width: 60px;
+  margin-left: 8px;
+  border: 1.5px solid #b7b7b7;
+  border-radius: 7px;
+  padding: 4px 8px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.open-now-label {
+  gap: 8px;
+  font-weight: 500;
+}
+
+.nearby-content {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+  margin-top: 0;
+}
+
+.nearby-map-card {
+  flex: 2.5;           /* Larger */
+  min-width: 500px;    /* Larger */
+  background: #fff;
+  border-radius: 24px;         /* more rounded */
+  box-shadow: 0 8px 32px #3d5a4012;
+  padding: 48px 40px 32px 40px; /* more padding */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.nearby-map {
+  width: 100%;
+  height: 420px;
+  border-radius: 12px;
+  border: 1.5px solid #b7b7b7;
+}
+
+.nearby-list-card {
+  flex: 1.8;           /* Larger */
+  min-width: 400px;    /* Larger */
+  background: #fff;
+  border-radius: 24px;         /* more rounded */
+  box-shadow: 0 8px 32px #3d5a4012;
+  padding: 48px 40px 32px 40px; /* more padding */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.nearby-list-card h2 {
+  color: #3d5a40;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+  text-align: left;
+}
+
+.pharmacies-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.pharmacy-list-item {
+  border-bottom: 1px solid #e0e0e0;
+  padding: 14px 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.pharmacy-list-item:last-child {
+  border-bottom: none;
+}
+
+.pharmacy-list-main {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.pharmacy-list-icon {
+  color: #3d5a40;
+  font-size: 2rem;
+  margin-top: 2px;
+}
+
+.pharmacy-list-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #3d5a40;
+}
+
+.pharmacy-list-address,
+.pharmacy-list-hours,
+.pharmacy-list-phone,
+.pharmacy-list-distance {
+  font-size: 0.98rem;
+  color: #444;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-profile {
+  margin-top: 6px;
+  font-size: 0.98rem;
+  padding: 7px 14px;
+}
+
+.empty {
+  color: #c62828;
+  text-align: center;
+  padding: 18px 0;
+}
+
+.nearby-footer {
+  margin-top: 32px;
+  text-align: center;
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+}
+
+.btn-green-link {
+  color: #3d5a40;
+  font-weight: 600;
+  text-decoration: underline;
+  font-size: 1.05rem;
+  transition: color 0.2s;
+}
+
+.btn-green-link:hover {
+  color: #2d3d2a;
+}
+
+.leaflet-popup-link {
+  color: #3d5a40;
+  font-weight: 600;
+  text-decoration: underline;
+  font-size: 1rem;
+}
+
+.pharmacy-list-clickable:hover, .pharmacy-list-clickable:focus {
+  background: #f5f3ef;
+  box-shadow: 0 2px 12px #3d5a4012;
+  outline: none;
+}
+
+@media (max-width: 900px) {
+  .nearby-content {
+    flex-direction: column;
+    gap: 24px;
+  }
+  .nearby-map-card,
+  .nearby-list-card {
+    min-width: 0;
+    width: 100%;
+  }
+  .nearby-main {
+    padding: 0 8px 24px 8px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .nearby-hero,
+  .nearby-main {
+    max-width: 1800px;
+  }
+}
