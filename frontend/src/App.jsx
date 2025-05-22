@@ -8,6 +8,7 @@ import NearbyPharmacies from "./components/NearbyPharmacies.jsx";
 import DoctorPage from "./components/DoctorPage.jsx";
 import PatientPrescriptions from "./components/PatientPrescriptions.jsx";
 import PharmacyClientDashboard from './components/PharmacyClientDashboard'
+import LivreurDashboard from "./components/LivreurDashboard.jsx";
 
 function App() {
   const [patients, setPatients] = useState([
@@ -79,6 +80,7 @@ function App() {
         <Route path="/doctor" element={<DoctorPage patients={patients} setPatients={setPatients} />} />
         <Route path="/doctor/patient/:id/prescriptions" element={<PatientPrescriptions patients={patients} />} />
         <Route path="/client-dashboard" element={<PharmacyClientDashboard />} />
+        <Route path="/livreur" element={<LivreurDashboard />} />
       </Routes>
     </Router>
   );

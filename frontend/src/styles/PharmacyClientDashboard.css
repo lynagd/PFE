@@ -96,16 +96,40 @@ body, .pharmacy-dashboard-root {
   background: #fff;
   border-radius: var(--card-radius);
   box-shadow: var(--card-shadow);
-  padding: 28px 22px;
+  padding: 36px 38px;
   margin-bottom: 28px;
   width: 100%;
-  max-width: 600px;   /* Make all cards equally wide */
+  max-width: 820px;
   min-width: 340px;
   margin-left: auto;
   margin-right: auto;
   display: flex;
   flex-direction: column;
-  align-items: stretch; /* Let inner content fill width */
+  align-items: stretch;
+}
+
+.prescription-card { /* keep for targeting, but no sizing here */ }
+
+.prescription-layout {
+  width: 100%;
+  border: none; /* Remove border for visual consistency */
+  border-radius: 0; /* Remove extra rounding */
+  padding: 0; /* Remove extra padding */
+  background: transparent; /* Match card background */
+  margin-bottom: 0;
+  box-shadow: none;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.prescription-list,
+.dashboard-list,
+.prescription-list-item,
+.dashboard-list-item {
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .dashboard-title {
@@ -120,15 +144,6 @@ body, .pharmacy-dashboard-root {
   flex-direction: column;
   gap: 16px;
   width: 100%; /* Make list fill card width */
-}
-
-.dashboard-list-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  border-bottom: 1px solid #f0f0f0;
-  padding-bottom: 10px;
-  width: 100%;
 }
 
 .dashboard-item-title {
@@ -285,21 +300,17 @@ body, .pharmacy-dashboard-root {
   outline: none;
 }
 
-.prescription-card {
-  max-width: 900px;
-  min-width: 340px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 32px 32px;
-}
+
 
 .prescription-layout {
-  border: 1.5px solid #2222;
-  border-radius: 12px;
-  padding: 24px 24px 16px 24px;
-  background: #fff;
-  margin-bottom: 18px;
-  box-shadow: 0 2px 12px 0 rgba(44,62,80,0.06);
+  width: 100%;
+  border: none; /* Remove border for visual consistency */
+  border-radius: 0; /* Remove extra rounding */
+  padding: 0; /* Remove extra padding */
+  background: transparent; /* Match card background */
+  margin-bottom: 0;
+  box-shadow: none;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -308,7 +319,7 @@ body, .pharmacy-dashboard-root {
 .prescription-header {
   display: flex;
   justify-content: space-between;
-  gap: 32px;
+  gap: 100px; /* Increased from 32px to 56px for more space */
   margin-bottom: 18px;
 }
 

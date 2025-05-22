@@ -1,0 +1,96 @@
+.livreur-bg {
+  background: #f5f3ef;
+  min-height: 100vh;
+  padding: 40px 0;
+}
+
+.livreur-container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.livreur-title {
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  color: #3d5a40;
+  font-weight: 700;
+  font-size: 2.2rem;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.livreur-card {
+  margin-bottom: 32px;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px #3d5a4012;
+  padding: 32px 36px;
+}
+
+.livreur-pharmacy-header h2 {
+  color: #3d5a40;
+  font-weight: 700;
+  font-size: 1.3rem;
+  margin-bottom: 2px;
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+}
+
+.livreur-pharmacy-address {
+  color: #666;
+  font-size: 1rem;
+  margin-bottom: 16px;
+}
+
+.livreur-empty {
+  color: #888;
+  font-style: italic;
+}
+
+.livreur-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+}
+
+.livreur-table th {
+  padding: 10px 8px;
+  color: #3d5a40;
+  font-weight: 700;
+  font-size: 1.05rem;
+  border-bottom: 2px solid #e0e0e0;
+  text-align: left;
+  background: #f5f3ef;
+}
+
+.livreur-table td {
+  padding: 10px 8px;
+  color: #222;
+  font-size: 1.02rem;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: top;
+}
+
+.livreur-table tr:nth-child(even) {
+  background: #f8f8f8;
+}
+
+.livreur-status {
+  border-radius: 8px;
+  padding: 4px 14px;
+  font-weight: 600;
+  font-size: 0.98rem;
+  color: #fff;
+  display: inline-block;
+}
+
+.livreur-status-encours {
+  background: #f7b731;
+}
+
+.livreur-status-livrée {
+  background: #4b7352;
+}
+
+.livreur-status-enattente {
+  background: #888;
+}

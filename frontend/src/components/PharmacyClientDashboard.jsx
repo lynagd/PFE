@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
 import { ShoppingCart, Clock, FileText, User, LogOut, Settings } from 'lucide-react';
 import '../styles/PharmacyClientDashboard.css';
+import { useNavigate } from 'react-router-dom';
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import Barcode from 'react-barcode';
 
 const PharmacyClientDashboard = () => {
   const [activeSection, setActiveSection] = useState('profile');
+  const [selectedPrescription, setSelectedPrescription] = useState(null);
+  const navigate = useNavigate();
+
   const [cartItems, setCartItems] = useState([
     { id: 1, name: 'Paracétamol 500mg', price: 250, quantity: 2, pharmacy: 'Pharmacie Central' },
     { id: 2, name: 'Doliprane 1000mg', price: 180, quantity: 1, pharmacy: 'Pharmacie du Centre' }
@@ -13,7 +20,18 @@ const PharmacyClientDashboard = () => {
     { id: 'CMD002', date: '2024-05-18', total: 320, status: 'En cours', pharmacy: 'Pharmacie du Centre' }
   ]);
   const [prescriptions] = useState([
-    { id: 'ORD001', doctor: 'Dr. Benali Ahmed', date: '2024-05-18', medications: ['Amoxicilline 500mg', 'Doliprane 1000mg'], status: 'Active' }
+    {
+      id: 'ORD001',
+      doctor: 'Dr. Benali Ahmed',
+      date: '2024-05-18',
+      medications: [
+        { nom: "Amoxicilline 500mg", posologie: "3x/jour", quantite: 10 },
+        { nom: "Doliprane 1000mg", posologie: "2x/jour", quantite: 6 }
+      ],
+      status: 'Active',
+      signatureUrl: '/assets/signature of the same medecin.png',
+      cachetUrl: ' /assets/personalized cachet for medecin with text replaced with infos from the screenshot.png'
+    }
   ]);
 
   const updateQuantity = (id, change) => {
@@ -32,10 +50,10 @@ const PharmacyClientDashboard = () => {
 
   const sidebarItems = [
     { id: 'profile', icon: User, label: 'Mon profil' },
-    { id: 'panier', icon: ShoppingCart, label: 'Panier' },
+    // { id: 'panier', icon: ShoppingCart, label: 'Panier' }, // Removed Panier
     { id: 'commandes', icon: Clock, label: 'Historique des commandes' },
     { id: 'prescriptions', icon: FileText, label: 'Mes prescriptions' },
-    { id: 'settings', icon: Settings, label: 'Paramètres' }, // <-- Add this
+    { id: 'settings', icon: Settings, label: 'Paramètres' },
     { id: 'logout', icon: LogOut, label: 'Déconnexion' }
   ];
 
@@ -130,6 +148,30 @@ const PharmacyClientDashboard = () => {
     </div>
   );
 
+  // PDF download handler (simple print for now)
+  const handleDownloadPDF = async () => {
+    const element = document.querySelector('.prescription-layout');
+    if (!element) return;
+    const canvas = await html2canvas(element, { scale: 2 });
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF({
+      orientation: "portrait",
+      unit: "pt",
+      format: "a4"
+    });
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const imgWidth = pageWidth - 40;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    pdf.addImage(imgData, 'PNG', 20, 20, imgWidth, imgHeight);
+    pdf.save("prescription.pdf");
+  };
+
+  // Nearby pharmacy handler
+  const handleFindPharmacy = (prescription) => {
+    navigate('/nearby-pharmacies', { state: { meds: prescription.medications.map(m => m.nom) } });
+  };
+
+  // List view for prescriptions
   const renderPrescriptions = () => (
     <div className="dashboard-card prescription-card">
       <h2 className="dashboard-title">Mes prescriptions</h2>
@@ -139,43 +181,109 @@ const PharmacyClientDashboard = () => {
           <p>Aucune prescription trouvée</p>
         </div>
       ) : (
-        prescriptions.map((prescription) => (
-          <div key={prescription.id} className="prescription-layout">
-            <div className="prescription-header">
+        <div className="prescription-list">
+          {prescriptions.map((prescription) => (
+            <div key={prescription.id} className="prescription-list-item" style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              background: "#f9f8f4",
+              borderRadius: 10,
+              marginBottom: 18,
+              boxShadow: "0 1px 4px 0 rgba(44,62,80,0.04)",
+              width: "100%" // Add this if not present
+            }}>
               <div>
-                <div className="prescription-doctor">
-                  <strong>Dr. Benali Ahmed</strong><br />
-                  Médecin Généraliste<br />
-                  N° Identifiant: 123456789<br />
-                  Téléphone: 06 12 34 56 78<br />
-                  12, Rue des Lilas 16000<br />
-                  Alger
-                </div>
+                <div><b>Médecin:</b> {prescription.doctor}</div>
+                <div><b>Date:</b> {prescription.date}</div>
               </div>
-              <div className="prescription-patient">
-                <div><b>Nom:</b> Ahmed</div>
-                <div><b>Prénom:</b> Benali</div>
-                <div><b>Date de naissance:</b> 1990-05-12</div>
-                <div><b>Âge:</b> 34</div>
-                <div><b>Sexe:</b> Homme</div>
-              </div>
+              <button
+                className="dashboard-action-btn-small"
+                onClick={() => setSelectedPrescription(prescription)}
+              >
+                Détails
+              </button>
             </div>
-            <ul className="prescription-meds">
-              {prescription.medications.map((med, idx) => (
-                <li key={idx}><b>{med}</b> — 3x/jour | Durée: 5 jours</li>
-              ))}
-            </ul>
-            <div className="prescription-footer">
-              <div>
-                <span className="prescription-barcode" />
-              </div>
-              <div>
-                Date: {prescription.date} &nbsp; Signature: __________________
-              </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
+  // Details view for a single prescription
+  const renderPrescriptionDetails = (prescription) => (
+    <div className="dashboard-card prescription-card">
+      <button
+        className="dashboard-action-btn-small"
+        style={{ marginBottom: 16 }}
+        onClick={() => setSelectedPrescription(null)}
+      >
+        Retour à la liste
+      </button>
+      <div className="prescription-layout">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 18 }}>
+          <div>
+            <strong>Dr. Benali Ahmed</strong><br />
+            Médecin Généraliste<br />
+            12, Rue des Lilas 16000<br />   {/* <-- Add this line */}
+            Alger<br />
+            Téléphone: 06 12 34 56 78
+          </div>
+          <div className="prescription-patient">
+            <div><b>Nom:</b> Ahmed</div>
+            <div><b>Prénom:</b> Benali</div>
+            <div><b>Âge:</b> 34</div>
+            {/* <div><b>Date de naissance:</b> 1990-05-12</div>
+            <div><b>Sexe:</b> Homme</div> */}
+          </div>
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+          <span><b>Fait le :</b> {prescription.date}</span>
+        </div>
+        <h2 style={{ textAlign: "center", margin: "12px 0 12px 0", fontWeight: 700, fontSize: "2rem" }}>Ordonnance</h2>
+        <div className="prescription-meds" style={{ marginBottom: 18 }}>
+          {prescription.medications.map((med, idx) => (
+            <div key={idx} style={{ marginBottom: 10 }}>
+              <b style={{ fontSize: "1.1rem" }}>{med.nom}</b> — {med.posologie} | Quantité: {med.quantite}
+            </div>
+          ))}
+        </div>
+        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginTop: 24 }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <Barcode value="0291-672" height={60} width={2} fontSize={18} />
+          </div>
+          <div style={{ display: "flex", gap: 32, alignItems: "center" }}>
+            <div style={{ textAlign: "center" }}>
+              Signature:<br />
+              <img
+                src={prescription.signatureUrl || "/signature-placeholder.png"}
+                alt="Signature"
+                style={{ height: 80, marginTop: 4, background: "transparent" }}
+              />
+            </div>
+            <div style={{ textAlign: "center" }}>
+              Cachet:<br />
+              <img
+                src={prescription.cachetUrl || "/cachet-placeholder.png"}
+                alt="Cachet"
+                style={{ height: 80, marginTop: 4, background: "transparent" }}
+              />
             </div>
           </div>
-        ))
-      )}
+        </div>
+        <div style={{ display: "flex", gap: 16, marginTop: 32 }}>
+          <button className="dashboard-action-btn" onClick={handleDownloadPDF}>
+            Enregistrer
+          </button>
+          <button
+            className="dashboard-action-btn"
+            style={{ background: "#4b7352" }}
+            onClick={() => handleFindPharmacy(prescription)}
+          >
+            Chercher dans pharmacie
+          </button>
+        </div>
+      </div>
     </div>
   );
 
@@ -206,12 +314,12 @@ const PharmacyClientDashboard = () => {
     switch (activeSection) {
       case 'profile':
         return renderProfile();
-      case 'panier':
-        return renderPanier();
       case 'commandes':
         return renderCommandes();
       case 'prescriptions':
-        return renderPrescriptions();
+        return selectedPrescription
+          ? renderPrescriptionDetails(selectedPrescription)
+          : renderPrescriptions();
       case 'settings':
         return renderSettings();
       default:
