@@ -9,32 +9,47 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://your-backend-url/api/login", {
-        email,
-        password,
-      });
-      console.log(response.data);
-      alert("Login successful!");
+      // Adapt URL to your backend
+      await axios.post("http://localhost:8000/login/", { email, password });
+      alert("Connexion réussie !");
     } catch (error) {
-      console.error("Login failed:", error);
-      alert("Login failed. Please try again.");
+      alert("Échec de la connexion. Veuillez réessayer.");
     }
   };
 
+
+
   return (
     <div className="login-container">
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
+      <h2>Connexion</h2>
+      <form onSubmit={handleLogin} className="login-form">
         <div className="form-group">
           <label>Email</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            placeholder="Votre email"
+          />
         </div>
         <div className="form-group">
           <label>Mot de passe</label>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            placeholder="Mot de passe"
+          />
         </div>
-        <button type="submit">Login</button>
+        <button type="submit" className="login-btn">
+          Se connecter
+        </button>
       </form>
+      <p className="login-link">
+        Pas de compte ? <a href="/register">Inscrivez-vous</a>
+      </p>
     </div>
   );
 };

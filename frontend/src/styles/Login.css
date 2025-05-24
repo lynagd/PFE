@@ -1,22 +1,21 @@
-/* Green Themed Login Container */
+/* Use Montserrat font and homepage colors */
 body {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f5f3ef;
   font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  background: #faf8f3;
+  margin: 0;
+  padding: 0;
 }
 
+.register-container,
 .login-container {
   background: #fff;
   color: #222;
-  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
-  padding: 48px 48px 36px 48px;
+  font-family: inherit;
+  padding: 40px 36px 32px 36px;
   border-radius: 18px;
   width: 420px;
   max-width: 98vw;
-  margin: 80px auto;
+  margin: 60px auto 0 auto;
   box-shadow: 0 8px 32px #3d5a4012;
   border: none;
   display: flex;
@@ -32,16 +31,62 @@ h2 {
   margin-bottom: 22px;
   letter-spacing: 0.5px;
   text-align: center;
-  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  font-family: inherit;
+}
+
+/* Role selection */
+.role-group {
+  width: 100%;
+  margin-bottom: 18px;
+}
+
+.role-group label {
+  font-size: 1rem;
+  color: #3d5a40;
+  font-weight: 500;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.role-btns {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.role-btn {
+  background: #f8faf8;
+  color: #3d5a40;
+  border: 1.5px solid #b7b7b7;
+  border-radius: 7px;
+  padding: 8px 18px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+  font-family: inherit;
+}
+
+.role-btn.active,
+.role-btn:hover {
+  background: #3d5a40;
+  color: #fff;
+  border: 1.5px solid #3d5a40;
 }
 
 /* Form fields */
+.register-form,
+.login-form {
+  width: 100%;
+  margin-top: 18px;
+}
+
 .form-group {
   margin-bottom: 22px;
   width: 100%;
 }
 
-label {
+.form-group label {
   display: block;
   font-size: 1rem;
   margin-bottom: 8px;
@@ -50,10 +95,11 @@ label {
   text-align: left;
 }
 
-input {
+input,
+select {
   width: 100%;
-  padding: 14px 12px;
-  font-size: 1rem;
+  padding: 16px 14px;
+  font-size: 1.08rem;
   border: 1.5px solid #b7b7b7;
   border-radius: 8px;
   background: #f8faf8;
@@ -64,14 +110,16 @@ input {
   font-family: inherit;
 }
 
-input:focus {
+input:focus,
+select:focus {
   border: 1.5px solid #3d5a40;
   outline: none;
   background: #fff;
 }
 
 /* Button */
-button {
+.register-btn,
+.login-btn {
   background: #3d5a40;
   color: #fff;
   padding: 14px 0;
@@ -87,7 +135,8 @@ button {
   font-family: inherit;
 }
 
-button:hover {
+.register-btn:hover,
+.login-btn:hover {
   background: #2d3d2a;
 }
 
@@ -97,7 +146,74 @@ button:hover {
 }
 
 .login-link a {
-  color: #3d5a40;
+  color: #e6a800;
   text-decoration: underline;
   font-weight: 500;
+}
+
+.or-divider {
+  width: 100%;
+  text-align: center;
+  margin: 18px 0 12px 0;
+  position: relative;
+}
+.or-divider span {
+  background: #fff;
+  color: #888;
+  padding: 0 12px;
+  position: relative;
+  z-index: 1;
+  font-size: 1rem;
+}
+.or-divider:before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: #e0e0e0;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  z-index: 0;
+}
+
+.social-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.08rem;
+  font-weight: 600;
+  padding: 12px 0;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: background 0.18s;
+  font-family: inherit;
+  box-shadow: 0 2px 8px #3d5a4012;
+}
+
+.facebook-btn {
+  background: #4267B2;
+  color: #fff;
+}
+.facebook-btn:hover {
+  background: #314d86;
+}
+
+.google-btn {
+  background: #fff;
+  color: #222;
+  border: 1.5px solid #b7b7b7;
+}
+.google-btn:hover {
+  background: #f5f3ef;
+}
+
+.social-icon {
+  width: 22px;
+  height: 22px;
+  display: inline-block;
 }
