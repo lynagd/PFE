@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./components/Login.jsx";
 import Register from "./components/Register.jsx";
-import PharmacyDashboard from "./components/PharmacyDashboard.jsx";
 import PharmacyProfile from "./components/PharmacyProfile.jsx";
 import NearbyPharmacies from "./components/NearbyPharmacies.jsx";
-import DoctorPage from "./components/DoctorPage.jsx";
-import PatientPrescriptions from "./components/PatientPrescriptions.jsx";
-import PharmacyClientDashboard from './components/PharmacyClientDashboard'
+import PharmacyClientDashboard from './components/ClientDashboard.jsx'
 import LivreurDashboard from "./components/LivreurDashboard.jsx";
+import DoctorDashboard from "./components/DoctorDashboard.jsx";
+import PharmacyLivreurs from "./components/PharmacyLivreurs.jsx";
+import PharmacyCommandes from "./components/PharmacyCommandes.jsx";
+import PharmacyDashboard from "./components/PharmacyDashboard.jsx";
 
 function App() {
   const [patients, setPatients] = useState([
@@ -61,26 +62,14 @@ function App() {
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/pharmacy-dashboard" element={<PharmacyDashboard />} />
-        <Route
-          path="/pharmacy-profile"
-          element={<PharmacyProfile pharmacie={{
-            nom_pharmacie: "Pharmacie Centrale",
-            nom_proprietaire: "Dr. Benali",
-            localisation: "123 Rue Principale, Alger",
-            heure_ouverture: "08:00",
-            heure_fermeture: "20:00",
-            personne: { num_tel: "0555 55 55 55" },
-            offre_livraison: true,
-            latitude: 36.752887,
-            longitude: 3.042048
-          }} />}
-        />
         <Route path="/nearby-pharmacies" element={<NearbyPharmacies />} />
-        <Route path="/doctor" element={<DoctorPage patients={patients} setPatients={setPatients} />} />
-        <Route path="/doctor/patient/:id/prescriptions" element={<PatientPrescriptions patients={patients} />} />
+        <Route path="/doctor" element={<DoctorDashboard patients={patients} setPatients={setPatients} />} />
         <Route path="/client-dashboard" element={<PharmacyClientDashboard />} />
         <Route path="/livreur" element={<LivreurDashboard />} />
+        <Route path="/pharmacy-profile" element={<PharmacyProfile />} />
+        <Route path="/pharmacy-livreurs" element={<PharmacyLivreurs />} />
+        <Route path="/pharmacy-commandes" element={<PharmacyCommandes />} />
+        <Route path="/pharmacy-dashboard" element={<PharmacyDashboard />} />
       </Routes>
     </Router>
   );
@@ -88,3 +77,13 @@ function App() {
 
 export default App;
 
+// import PharmacyDashboard from "./components/PharmacyDashboard.jsx";
+// // ...other imports...
+
+// function App() {
+//   return (
+//     <PharmacyDashboard />
+//   );
+// }
+
+// export default App;

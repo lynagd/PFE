@@ -1,12 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FaMapMarkerAlt, FaClock, FaPhoneAlt, FaRoute, FaSyncAlt, FaSearchLocation } from "react-icons/fa";
 import "leaflet/dist/leaflet.css";
-import "../styles/NearbyPharmacies.css";
 import L from "leaflet";
 import { useNavigate } from "react-router-dom";
 
 const defaultPharmacies = [
-  // Example data; replace with API or props
   {
     id: 1,
     name: "Pharmacie Centrale",
@@ -203,82 +201,93 @@ const NearbyPharmacies = () => {
   };
 
   return (
-    <div className="nearby-bg">
-      <div className="nearby-hero">
-        <h1>
-          <span>Pharmacies à proximité</span>
-        </h1>
-        <p>
-          Trouvez rapidement les pharmacies ouvertes autour de vous, visualisez-les sur la carte et accédez à leurs profils
-        </p>
-      </div>
-      <div className="nearby-main">
-        <div className="nearby-controls">
-          <div className="geo-section">
-            <button className="btn-green" onClick={handleGeolocate} disabled={loading}>
+    <div className="min-h-screen bg-[#faf8f3] font-sans">
+      <div className="max-w-[1600px] mx-auto mt-0 px-12 pb-12 relative z-30">
+        {/* Controls */}
+        <div className="bg-white rounded-[24px] shadow-[0_8px_32px_rgba(61,90,64,0.07)] px-10 py-12 mb-8 flex flex-wrap gap-8 justify-between">
+          <div className="flex-2 min-w-[320px]">
+            <button
+              className="bg-khder text-white rounded-lg px-6 py-2 font-semibold text-base mb-2 flex items-center gap-2 transition hover:bg-[#355c3a] disabled:opacity-70 disabled:cursor-not-allowed"
+              onClick={handleGeolocate}
+              disabled={loading}
+            >
               <FaSearchLocation /> {loading ? "Recherche..." : "Activer la géolocalisation"}
             </button>
-            <span className="geo-status">{status}</span>
-            {accuracy && <span className="geo-accuracy">{accuracy}</span>}
-            <div className="manual-address">
-              <button className="btn-green-outline" onClick={handleManualAddress}>
+            <span className="block text-khder text-base mb-1">{status}</span>
+            {accuracy && <span className="block text-khder text-base mb-1">{accuracy}</span>}
+            <div className="flex gap-2 mt-2">
+              <input
+                type="text"
+                value={manualAddress}
+                onChange={e => setManualAddress(e.target.value)}
+                placeholder="Entrer une adresse manuellement"
+                className="flex-1 border border-[#b7b7b7] rounded-lg px-3 py-2 text-base"
+              />
+              <button
+                className="bg-white text-khder border-2 border-khder rounded-lg px-4 py-2 font-semibold flex items-center gap-2 transition hover:bg-khder hover:text-white"
+                onClick={handleManualAddress}
+                type="button"
+              >
                 <FaSyncAlt /> Valider
               </button>
             </div>
           </div>
-          <div className="filters-section">
-            <label>
+          <div className="flex-1 min-w-[220px] flex flex-col gap-3 justify-center">
+            <label className="text-base text-khder font-semibold flex items-center gap-2">
               <span>Distance max (km):</span>
               <input
                 type="number"
                 min={1}
                 value={maxDistance}
-                onChange={(e) => setMaxDistance(Number(e.target.value))}
+                onChange={e => setMaxDistance(Number(e.target.value))}
+                className="w-16 ml-2 border border-[#b7b7b7] rounded-lg px-2 py-1 text-base"
               />
             </label>
-            <label className="open-now-label" style={{ alignItems: "center", gap: 12 }}>
+            <label className="flex items-center gap-3 font-medium">
               <input
                 type="checkbox"
                 checked={openNow}
-                onChange={(e) => setOpenNow(e.target.checked)}
-                style={{ width: 22, height: 22, accentColor: "#3d5a40" }} // bigger checkbox
+                onChange={e => setOpenNow(e.target.checked)}
+                className="w-5 h-5 accent-khder"
               />
               <span>Pharmacies actuellement ouvertes</span>
             </label>
           </div>
         </div>
-        <div className="nearby-content">
-          <div className="nearby-map-card">
-            <div id="map" className="nearby-map"></div>
+        {/* Content */}
+        <div className="flex gap-8 flex-wrap mt-0">
+          {/* Map card */}
+          <div className="flex-[2.5] min-w-[320px] md:min-w-[500px] bg-white rounded-[24px] shadow-[0_8px_32px_rgba(61,90,64,0.07)] px-10 py-12 flex flex-col items-stretch">
+            <div id="map" className="w-full h-[420px] rounded-xl border border-[#b7b7b7]"></div>
           </div>
-          <div className="nearby-list-card">
-            <h2>Pharmacies à proximité</h2>
-            <ul className="pharmacies-list">
+          {/* List card */}
+          <div className="flex-[1.8] min-w-[300px] md:min-w-[400px] bg-white rounded-[24px] shadow-[0_8px_32px_rgba(61,90,64,0.07)] px-10 py-12 flex flex-col items-stretch">
+            <h2 className="text-khder text-xl font-bold mb-5 text-left">Pharmacies à proximité</h2>
+            <ul className="list-none p-0 m-0">
               {filtered.length === 0 ? (
-                <li className="empty">Aucune pharmacie disponible.</li>
+                <li className="text-[#c62828] text-center py-5">Aucune pharmacie disponible.</li>
               ) : (
                 filtered.map((ph) => (
                   <li
                     key={ph.id}
-                    className="pharmacy-list-item pharmacy-list-clickable"
+                    className="border-b border-[#e0e0e0] py-3 flex items-start justify-between gap-3 hover:bg-[#f5f3ef] hover:shadow-[0_2px_12px_rgba(61,90,64,0.07)] focus:bg-[#f5f3ef] focus:shadow-[0_2px_12px_rgba(61,90,64,0.07)] outline-none cursor-pointer transition"
                     onClick={() => navigate(`/pharmacy-profile?id=${ph.id}`)}
                     tabIndex={0}
                     onKeyDown={e => { if (e.key === "Enter") navigate(`/pharmacy-profile?id=${ph.id}`); }}
-                    style={{ cursor: "pointer" }}
                   >
-                    <div className="pharmacy-list-main">
-                      <FaMapMarkerAlt className="pharmacy-list-icon" />
+                    <div className="flex gap-4 items-start">
+                      <FaMapMarkerAlt className="text-khder text-2xl mt-0.5" />
                       <div>
-                        <span className="pharmacy-list-name">{ph.name}</span>
-                        <div className="pharmacy-list-address">{ph.address}</div>
-                        <div className="pharmacy-list-hours">
+                        <span className="text-khder font-bold text-lg">{ph.name}</span>
+                        <div className="text-[#444] text-base flex items-center gap-2 mt-1">{ph.address}</div>
+                        <div className="text-[#444] text-base flex items-center gap-2 mt-1">
                           <FaClock /> {ph.hours}
                         </div>
-                        <div className="pharmacy-list-phone">
+                        <div className="text-[#444] text-base flex items-center gap-2 mt-1">
                           <FaPhoneAlt /> {ph.phone}
                         </div>
                         {ph.distance !== undefined && (
-                          <div className="pharmacy-list-distance">
+                          <div className="text-[#444] text-base flex items-center gap-2 mt-1">
                             <FaRoute /> {ph.distance.toFixed(2)} km
                           </div>
                         )}
@@ -290,9 +299,10 @@ const NearbyPharmacies = () => {
             </ul>
           </div>
         </div>
-        <div className="nearby-footer">
-          <a href="/" className="btn-green-link">Retour à l'accueil</a>
-          <a href="/logout" className="btn-green-link">Se déconnecter</a>
+        {/* Footer */}
+        <div className="mt-8 text-center flex gap-6 justify-center">
+          <a href="/" className="text-khder font-semibold underline text-base hover:text-[#2d3d2a] transition">Retour à l'accueil</a>
+          <a href="/logout" className="text-khder font-semibold underline text-base hover:text-[#2d3d2a] transition">Se déconnecter</a>
         </div>
       </div>
     </div>

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "../styles/Register.css";
 import axios from "axios";
 
 const initialForm = {
@@ -15,6 +14,8 @@ const initialForm = {
   parent_email: "",
   registre_commerce: null,
   agrement: null,
+  signature: null,
+  cachet: null,
 };
 
 const Register = () => {
@@ -23,8 +24,10 @@ const Register = () => {
   const [showParentEmail, setShowParentEmail] = useState(false);
   const [birth, setBirth] = useState({ day: "", month: "", year: "" });
   const [fileLabel, setFileLabel] = useState({
-    registre: "Aucun fichier choisi",
+    registre_commerce: "Aucun fichier choisi",
     agrement: "Aucun fichier choisi",
+    signature: "Aucun fichier choisi",
+    cachet: "Aucun fichier choisi",
   });
 
   // Helper: check if under 18
@@ -54,7 +57,6 @@ const Register = () => {
     const { name, value } = e.target;
     const updated = { ...birth, [name]: value };
     setBirth(updated);
-    // Only update form.date_naissance if all are filled
     if (updated.day && updated.month && updated.year) {
       setForm({
         ...form,
@@ -72,6 +74,7 @@ const Register = () => {
     setRole(newRole);
     setForm(initialForm);
     setShowParentEmail(false);
+    setBirth({ day: "", month: "", year: "" });
   };
 
   const handleCustomFile = (e, type) => {
@@ -105,6 +108,8 @@ const Register = () => {
     }
     if (role === "medecin" && form.agrement) {
       data.append("agrement", form.agrement);
+      if (form.signature) data.append("signature", form.signature);
+      if (form.cachet) data.append("cachet", form.cachet);
     }
 
     try {
@@ -118,245 +123,368 @@ const Register = () => {
   };
 
   return (
-    <div className="register-container">
-      <h2>Inscription</h2>
-      <div className="role-group">
-        <label>Je suis :</label>
-        <div className="role-btns">
-          <button
-            type="button"
-            className={role === "client" ? "role-btn active" : "role-btn"}
-            onClick={() => handleRoleChange("client")}
-          >
-            Client
-          </button>
-          <button
-            type="button"
-            className={role === "pharmacie" ? "role-btn active" : "role-btn"}
-            onClick={() => handleRoleChange("pharmacie")}
-          >
-            Pharmacie
-          </button>
-          <button
-            type="button"
-            className={role === "medecin" ? "role-btn active" : "role-btn"}
-            onClick={() => handleRoleChange("medecin")}
-          >
-            Médecin
-          </button>
-        </div>
-      </div>
-      <form className="register-form" onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Nom complet</label>
-          <input
-            type="text"
-            name="nom"
-            value={form.nom}
-            onChange={handleChange}
-            required
-            placeholder="Votre nom complet"
-          />
-        </div>
-        <div className="form-group">
-          <label>Email</label>
-          <input
-            type="email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-            required
-            placeholder="Votre email"
-          />
-        </div>
-        <div className="form-group">
-          <label>Mot de passe</label>
-          <input
-            type="password"
-            name="password"
-            value={form.password}
-            onChange={handleChange}
-            required
-            placeholder="Mot de passe"
-          />
-        </div>
-        <div className="form-group">
-          <label>Confirmer le mot de passe</label>
-          <input
-            type="password"
-            name="confirmPassword"
-            value={form.confirmPassword}
-            onChange={handleChange}
-            required
-            placeholder="Confirmez le mot de passe"
-          />
-        </div>
-        <div className="form-group">
-          <label>Date de naissance</label>
-          <div style={{ display: "flex", gap: "8px" }}>
-            <select
-              name="day"
-              value={birth.day}
-              onChange={handleBirthChange}
-              required
-              style={{ flex: 1 }}
+    <div className="min-h-screen flex items-center justify-center bg-lfond">
+      <div className="bg-white rounded-2xl shadow-xl px-8 py-10 w-full max-w-lg flex flex-col items-center">
+        <h2 className="text-2xl font-bold text-khder mb-6 flex items-center gap-2">
+          Inscription
+        </h2>
+        <div className="w-full mb-5">
+          <div className="flex gap-2 w-full justify-center mb-2">
+            <button
+              type="button"
+              className={`px-5 py-2 rounded-lg font-medium border transition text-base ${
+                role === "client"
+                  ? "bg-khder text-white border-khder"
+                  : "bg-smth text-khder border-[#b7b7b7] hover:bg-lsecondary"
+              }`}
+              onClick={() => handleRoleChange("client")}
             >
-              <option value="">Jour</option>
-              {[...Array(31)].map((_, i) => (
-                <option key={i + 1} value={String(i + 1).padStart(2, "0")}>
-                  {i + 1}
-                </option>
-              ))}
-            </select>
-            <select
-              name="month"
-              value={birth.month}
-              onChange={handleBirthChange}
-              required
-              style={{ flex: 1 }}
+              Client
+            </button>
+            <button
+              type="button"
+              className={`px-5 py-2 rounded-lg font-medium border transition text-base ${
+                role === "pharmacie"
+                  ? "bg-khder text-white border-khder"
+                  : "bg-smth text-khder border-[#b7b7b7] hover:bg-lsecondary"
+              }`}
+              onClick={() => handleRoleChange("pharmacie")}
             >
-              <option value="">Mois</option>
-              {[
-                "01", "02", "03", "04", "05", "06",
-                "07", "08", "09", "10", "11", "12"
-              ].map((m, i) => (
-                <option key={m} value={m}>
-                  {[
-                    "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
-                    "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
-                  ][i]}
-                </option>
-              ))}
-            </select>
-            <select
-              name="year"
-              value={birth.year}
-              onChange={handleBirthChange}
-              required
-              style={{ flex: 1 }}
+              Pharmacie
+            </button>
+            <button
+              type="button"
+              className={`px-5 py-2 rounded-lg font-medium border transition text-base ${
+                role === "medecin"
+                  ? "bg-khder text-white border-khder"
+                  : "bg-smth text-khder border-[#b7b7b7] hover:bg-lsecondary"
+              }`}
+              onClick={() => handleRoleChange("medecin")}
             >
-              <option value="">Année</option>
-              {Array.from({ length: 100 }, (_, i) =>
-                new Date().getFullYear() - i
-              ).map((y) => (
-                <option key={y} value={y}>
-                  {y}
-                </option>
-              ))}
-            </select>
+              Médecin
+            </button>
           </div>
         </div>
-        <div className="form-group">
-          <label>Sexe</label>
-          <select
-            name="sexe"
-            value={form.sexe}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Sélectionner</option>
-            <option value="H">Homme</option>
-            <option value="F">Femme</option>
-          </select>
-        </div>
-        <div className="form-group">
-          <label>Wilaya</label>
-          <input
-            type="text"
-            name="wilaya"
-            value={form.wilaya}
-            onChange={handleChange}
-            required
-            placeholder="Votre wilaya"
-          />
-        </div>
-        <div className="form-group">
-          <label>Commune</label>
-          <input
-            type="text"
-            name="commune"
-            value={form.commune}
-            onChange={handleChange}
-            required
-            placeholder="Votre commune"
-          />
-        </div>
-        <div className="form-group">
-          <label>Adresse</label>
-          <input
-            type="text"
-            name="adresse"
-            value={form.adresse}
-            onChange={handleChange}
-            required
-            placeholder="Votre adresse"
-          />
-        </div>
-
-        {/* Parent email if under 18 */}
-        {showParentEmail && (
-          <div className="form-group">
-            <label>Email du parent</label>
+        <form className="w-full" onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block text-khder font-medium mb-1">Nom complet</label>
             <input
-              type="email"
-              name="parent_email"
-              value={form.parent_email}
+              type="text"
+              name="nom"
+              value={form.nom}
               onChange={handleChange}
               required
-              placeholder="Email du parent"
+              placeholder="Votre nom complet"
+              className="w-full px-4 py-3 rounded-lg border border-[#b7b7b7] bg-smth text-[#222] focus:border-khder focus:bg-white outline-none transition"
             />
           </div>
-        )}
-
-        {/* Pharmacie-specific */}
-        {role === "pharmacie" && (
-          <div className="form-group">
-            <label>Registre de commerce (PDF/Image)</label>
-            <div className="custom-file-input-wrapper">
-              <span className="custom-file-label">{fileLabel.registre}</span>
-              <label className="custom-file-btn" htmlFor="registre_commerce">
-                Choisir un fichier
-              </label>
-              <input
-                type="file"
-                id="registre_commerce"
-                name="registre_commerce"
-                accept=".pdf,image/*"
-                onChange={(e) => handleCustomFile(e, "registre_commerce")}
+          <div className="mb-4">
+            <label className="block text-khder font-medium mb-1">Email</label>
+            <input
+              type="email"
+              name="email"
+              value={form.email}
+              onChange={handleChange}
+              required
+              placeholder="Votre email"
+              className="w-full px-4 py-3 rounded-lg border border-[#b7b7b7] bg-smth text-[#222] focus:border-khder focus:bg-white outline-none transition"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-khder font-medium mb-1">Mot de passe</label>
+            <input
+              type="password"
+              name="password"
+              value={form.password}
+              onChange={handleChange}
+              required
+              placeholder="Mot de passe"
+              className="w-full px-4 py-3 rounded-lg border border-[#b7b7b7] bg-smth text-[#222] focus:border-khder focus:bg-white outline-none transition"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-khder font-medium mb-1">Confirmer le mot de passe</label>
+            <input
+              type="password"
+              name="confirmPassword"
+              value={form.confirmPassword}
+              onChange={handleChange}
+              required
+              placeholder="Confirmez le mot de passe"
+              className="w-full px-4 py-3 rounded-lg border border-[#b7b7b7] bg-smth text-[#222] focus:border-khder focus:bg-white outline-none transition"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-khder font-medium mb-1">Date de naissance</label>
+            <div className="flex gap-2">
+              <select
+                name="day"
+                value={birth.day}
+                onChange={handleBirthChange}
                 required
-              />
+                className="flex-1 px-3 py-2 rounded-lg border border-[#b7b7b7] bg-smth text-[#222] focus:border-khder focus:bg-white outline-none transition"
+              >
+                <option value="">Jour</option>
+                {[...Array(31)].map((_, i) => (
+                  <option key={i + 1} value={String(i + 1).padStart(2, "0")}>
+                    {i + 1}
+                  </option>
+                ))}
+              </select>
+              <select
+                name="month"
+                value={birth.month}
+                onChange={handleBirthChange}
+                required
+                className="flex-1 px-3 py-2 rounded-lg border border-[#b7b7b7] bg-smth text-[#222] focus:border-khder focus:bg-white outline-none transition"
+              >
+                <option value="">Mois</option>
+                {[
+                  "01", "02", "03", "04", "05", "06",
+                  "07", "08", "09", "10", "11", "12"
+                ].map((m, i) => (
+                  <option key={m} value={m}>
+                    {[
+                      "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+                      "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
+                    ][i]}
+                  </option>
+                ))}
+              </select>
+              <select
+                name="year"
+                value={birth.year}
+                onChange={handleBirthChange}
+                required
+                className="flex-1 px-3 py-2 rounded-lg border border-[#b7b7b7] bg-smth text-[#222] focus:border-khder focus:bg-white outline-none transition"
+              >
+                <option value="">Année</option>
+                {Array.from({ length: 100 }, (_, i) =>
+                  new Date().getFullYear() - i
+                ).map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
-        )}
-
-        {/* Médecin-specific */}
-        {role === "medecin" && (
-          <div className="form-group">
-            <label>Agrément (PDF/Image)</label>
-            <div className="custom-file-input-wrapper">
-              <span className="custom-file-label">{fileLabel.agrement}</span>
-              <label className="custom-file-btn" htmlFor="agrement">
-                Choisir un fichier
-              </label>
+          <div className="mb-4">
+            <label className="block text-khder font-medium mb-1">Sexe</label>
+            <select
+              name="sexe"
+              value={form.sexe}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 rounded-lg border border-[#b7b7b7] bg-smth text-[#222] focus:border-khder focus:bg-white outline-none transition"
+            >
+              <option value="">Sélectionner</option>
+              <option value="H">Homme</option>
+              <option value="F">Femme</option>
+            </select>
+          </div>
+          <div className="mb-4">
+            <label className="block text-khder font-medium mb-1">Wilaya</label>
+            <input
+              type="text"
+              name="wilaya"
+              value={form.wilaya}
+              onChange={handleChange}
+              required
+              placeholder="Votre wilaya"
+              className="w-full px-4 py-3 rounded-lg border border-[#b7b7b7] bg-smth text-[#222] focus:border-khder focus:bg-white outline-none transition"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-khder font-medium mb-1">Commune</label>
+            <input
+              type="text"
+              name="commune"
+              value={form.commune}
+              onChange={handleChange}
+              required
+              placeholder="Votre commune"
+              className="w-full px-4 py-3 rounded-lg border border-[#b7b7b7] bg-smth text-[#222] focus:border-khder focus:bg-white outline-none transition"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-khder font-medium mb-1">Adresse</label>
+            <input
+              type="text"
+              name="adresse"
+              value={form.adresse}
+              onChange={handleChange}
+              required
+              placeholder="Votre adresse"
+              className="w-full px-4 py-3 rounded-lg border border-[#b7b7b7] bg-smth text-[#222] focus:border-khder focus:bg-white outline-none transition"
+            />
+          </div>
+          {showParentEmail && (
+            <div className="mb-4">
+              <label className="block text-khder font-medium mb-1">Email du parent</label>
               <input
-                type="file"
-                id="agrement"
-                name="agrement"
-                accept=".pdf,image/*"
-                onChange={(e) => handleCustomFile(e, "agrement")}
+                type="email"
+                name="parent_email"
+                value={form.parent_email}
+                onChange={handleChange}
                 required
+                placeholder="Email du parent"
+                className="w-full px-4 py-3 rounded-lg border border-[#b7b7b7] bg-smth text-[#222] focus:border-khder focus:bg-white outline-none transition"
               />
             </div>
-          </div>
-        )}
-
-        <button type="submit" className="register-btn">
-          S'inscrire
-        </button>
-      </form>
-      <p className="login-link">
-        Déjà un compte ? <a href="/login">Connectez-vous</a>
-      </p>
+          )}
+          {/* Pharmacie-specific */}
+          {role === "pharmacie" && (
+            <div className="mb-4">
+              <label className="block text-khder font-medium mb-1">Registre de commerce (PDF/Image)</label>
+              <div className="flex items-stretch w-full">
+                <span
+                  className={`flex-1 px-4 rounded-l-lg border border-[#b7b7b7] bg-smth flex items-center text-[#222] text-base overflow-hidden whitespace-nowrap text-ellipsis ${
+                    fileLabel.registre_commerce !== "Aucun fichier choisi"
+                      ? "bg-[#e6f2ea] font-semibold border-[#537D5D]"
+                      : "font-normal"
+                  }`}
+                  style={{ height: "44px" }}
+                >
+                  {fileLabel.registre_commerce}
+                  {fileLabel.registre_commerce !== "Aucun fichier choisi" && (
+                    <span className="ml-2 text-[#537D5D] text-lg">✓</span>
+                  )}
+                </span>
+                <label
+                  className="bg-smth text-khder border border-l-0 border-[#b7b7b7] rounded-r-lg px-4 flex items-center cursor-pointer font-medium hover:bg-khder hover:text-white transition"
+                  style={{ height: "44px" }}
+                  htmlFor="registre_commerce"
+                >
+                  Choisir un fichier
+                </label>
+                <input
+                  type="file"
+                  id="registre_commerce"
+                  name="registre_commerce"
+                  accept=".pdf,image/*"
+                  onChange={(e) => handleCustomFile(e, "registre_commerce")}
+                  required
+                  className="hidden"
+                />
+              </div>
+            </div>
+          )}
+          {/* Médecin-specific */}
+          {role === "medecin" && (
+            <>
+              <div className="mb-4">
+                <label className="block text-khder font-medium mb-1">Agrément (PDF/Image)</label>
+                <div className="flex items-stretch w-full">
+                  <span
+                    className={`flex-1 px-4 rounded-l-lg border border-[#b7b7b7] bg-smth flex items-center text-[#222] text-base overflow-hidden whitespace-nowrap text-ellipsis ${
+                      fileLabel.agrement !== "Aucun fichier choisi"
+                        ? "bg-[#e6f2ea] font-semibold border-[#537D5D]"
+                        : "font-normal"
+                    }`}
+                    style={{ height: "44px" }}
+                  >
+                    {fileLabel.agrement}
+                  </span>
+                  <label
+                    className="bg-smth text-khder border border-l-0 border-[#b7b7b7] rounded-r-lg px-4 flex items-center cursor-pointer font-medium hover:bg-khder hover:text-white transition"
+                    style={{ height: "44px" }}
+                    htmlFor="agrement"
+                  >
+                    Choisir un fichier
+                  </label>
+                  <input
+                    type="file"
+                    id="agrement"
+                    name="agrement"
+                    accept=".pdf,image/*"
+                    onChange={(e) => handleCustomFile(e, "agrement")}
+                    required
+                    className="hidden"
+                  />
+                </div>
+              </div>
+              <div className="mb-4">
+                <label className="block text-khder font-medium mb-1">Signature (Image)</label>
+                <div className="flex items-stretch w-full">
+                  <span
+                    className={`flex-1 px-4 rounded-l-lg border border-[#b7b7b7] bg-smth flex items-center text-[#222] text-base overflow-hidden whitespace-nowrap text-ellipsis ${
+                      fileLabel.signature !== "Aucun fichier choisi"
+                        ? "bg-[#e6f2ea] font-semibold border-[#537D5D]"
+                        : "font-normal"
+                    }`}
+                    style={{ height: "44px" }}
+                  >
+                    {fileLabel.signature}
+                  </span>
+                  <label
+                    className="bg-smth text-khder border border-l-0 border-[#b7b7b7] rounded-r-lg px-4 flex items-center cursor-pointer font-medium hover:bg-khder hover:text-white transition"
+                    style={{ height: "44px" }}
+                    htmlFor="signature"
+                  >
+                    Choisir un fichier
+                  </label>
+                  <input
+                    type="file"
+                    id="signature"
+                    name="signature"
+                    accept="image/png"
+                    onChange={(e) => handleCustomFile(e, "signature")}
+                    required
+                    className="hidden"
+                  />
+                </div>
+              </div>
+              <div className="mb-4">
+                <label className="block text-khder font-medium mb-1">Cachet (Image)</label>
+                <div className="flex items-stretch w-full">
+                  <span
+                    className={`flex-1 px-4 rounded-l-lg border border-[#b7b7b7] bg-smth flex items-center text-[#222] text-base overflow-hidden whitespace-nowrap text-ellipsis ${
+                      fileLabel.cachet !== "Aucun fichier choisi"
+                        ? "bg-[#e6f2ea] font-semibold border-[#537D5D]"
+                        : "font-normal"
+                    }`}
+                    style={{ height: "44px" }}
+                  >
+                    {fileLabel.cachet}
+                  </span>
+                  <label
+                    className="bg-smth text-khder border border-l-0 border-[#b7b7b7] rounded-r-lg px-4 flex items-center cursor-pointer font-medium hover:bg-khder hover:text-white transition"
+                    style={{ height: "44px" }}
+                    htmlFor="cachet"
+                  >
+                    Choisir un fichier
+                  </label>
+                  <input
+                    type="file"
+                    id="cachet"
+                    name="cachet"
+                    accept="image/png"
+                    onChange={(e) => handleCustomFile(e, "cachet")}
+                    required
+                    className="hidden"
+                  />
+                </div>
+              </div>
+            </>
+          )}
+          <button
+            type="submit"
+            className="w-full bg-khder text-white font-bold rounded-lg py-3 mt-2 shadow hover:bg-[#2d3d2a] transition"
+          >
+            S'inscrire
+          </button>
+        </form>
+        <p className="mt-6 text-center text-[#222] text-sm">
+          Déjà un compte ?{" "}
+          <a
+            href="/login"
+            className="text-tchini underline font-semibold hover:text-yellow-600 transition"
+          >
+            Connectez-vous
+          </a>
+        </p>
+      </div>
     </div>
   );
 };
