@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { User, Truck, Home } from "lucide-react";
+import { User, Truck, Home } from "lucide-react"; // Replace UserRound with Truck
 
 // Mock data
 const livreurProfile = {
@@ -73,13 +73,15 @@ const sidebarItems = [
 ];
 
 const statusColor = (status) => {
-  if (status === "En cours")
-    return "bg-tchini text-[#222] font-bold rounded-xl px-6 py-3 text-lg shadow-none border-none flex items-center justify-center";
+  if (status === "En cours" || status === "Acceptée")
+    // Acceptée: pale yellow background, dark yellow text, bold (like screenshot)
+    return "bg-[#fff7d6] text-[#8d7b2a] font-bold rounded-xl px-6 py-3 text-base shadow-none border-none flex items-center justify-center";
   if (status === "Livrée")
-    return "bg-khder text-white font-bold rounded-xl px-6 py-3 text-lg shadow-none border-none flex items-center justify-center";
+    // Livrée: slightly darker blue background, green text, bold
+    return "bg-[#dbeaf3] text-[#3d5a40] font-bold rounded-xl px-6 py-3 text-base shadow-none border-none flex items-center justify-center";
   if (status === "Non livrée" || status === "En attente")
-    return "bg-gray-400 text-white font-bold rounded-xl px-6 py-3 text-lg shadow-none border-none flex items-center justify-center";
-  return "bg-gray-300 text-[#222] font-bold rounded-xl px-6 py-3 text-lg shadow-none border-none flex items-center justify-center";
+    return "bg-[#f4f4f4] text-[#444] font-bold rounded-xl px-6 py-3 text-base shadow-none border-none flex items-center justify-center";
+  return "bg-gray-300 text-[#222] font-bold rounded-xl px-6 py-3 text-base shadow-none border-none flex items-center justify-center";
 };
 
 const LivreurDashboard = () => {
@@ -88,7 +90,7 @@ const LivreurDashboard = () => {
 
   // Profile section (read-only)
   const renderProfile = () => (
-    <div className="bg-white rounded-2xl shadow-xl px-8 py-8 w-full max-w-xl flex flex-col items-stretch mt-10">
+    <div className="bg-lfond rounded-2xl shadow-none px-8 py-8 w-full max-w-xl flex flex-col items-stretch mt-10">
       <h2 className="text-xl font-bold text-khder mb-6">profil</h2>
       <form className="flex flex-col gap-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -117,7 +119,7 @@ const LivreurDashboard = () => {
 
   // Pharmacies section
   const renderPharmacies = () => (
-    <div className="bg-white rounded-2xl shadow-xl px-8 py-8 w-full max-w-xl flex flex-col items-stretch mt-10">
+    <div className="bg-lfond rounded-2xl shadow-none px-8 py-8 w-full max-w-xl flex flex-col items-stretch mt-10">
       <h2 className="text-xl font-bold text-khder mb-6">Pharmacies</h2>
       <div className="flex flex-col gap-4">
         {pharmaciesList.map((ph, idx) => (
@@ -142,7 +144,7 @@ const LivreurDashboard = () => {
       {commandes.map((pharmacy, idx) => (
         <div
           key={idx}
-          className="bg-white rounded-[32px] shadow-xl px-8 py-8 w-full max-w-3xl flex flex-col items-stretch"
+          className="bg-lfond rounded-[32px] shadow-none px-8 py-8 w-full max-w-3xl flex flex-col items-stretch"
         >
           <div className="mb-2">
             <h2 className="text-2xl font-bold text-khder text-left mb-2 font-sans">
@@ -212,7 +214,7 @@ const LivreurDashboard = () => {
                         <td className="py-4 px-4 align-top font-sans">
                           {cmd.status === "En cours" ? (
                             <span
-                              className={statusColor(cmd.status)}
+                              className={statusColor("Acceptée")}
                               style={{
                                 minWidth: "110px",
                                 minHeight: "56px",
@@ -225,7 +227,7 @@ const LivreurDashboard = () => {
                               title="Cliquer pour marquer comme Livrée"
                               onClick={() => handleStatusClick(idx, i)}
                             >
-                              {cmd.status}
+                              Acceptée
                             </span>
                           ) : (
                             <span
@@ -240,7 +242,7 @@ const LivreurDashboard = () => {
                                 border: "none",
                               }}
                             >
-                              {cmd.status}
+                              {cmd.status === "Livrée" ? "Livrée" : cmd.status}
                             </span>
                           )}
                         </td>
@@ -292,7 +294,10 @@ const LivreurDashboard = () => {
   return (
     <div className="flex min-h-screen bg-lfond">
       <aside className="fixed top-0 left-0 h-full w-60 bg-khder text-white flex flex-col items-center z-50 shadow-lg">
-        <div className="text-2xl font-bold mt-8 mb-10 tracking-wide">LivreurConnect</div>
+        <div className="flex items-center gap-3 mt-8 mb-10 tracking-wide text-xl font-bold">
+          <Truck size={28} className="text-white" />
+          <span>{livreurProfile.nom}</span>
+        </div>
         <nav className="flex flex-col w-full gap-0 mt-4">
           {sidebarItems.map((item) => {
             const Icon = item.icon;

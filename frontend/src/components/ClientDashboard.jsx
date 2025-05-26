@@ -51,6 +51,19 @@ const PharmacyClientDashboard = () => {
       status: 'Active',
       signatureUrl: '/assets/signature of the same medecin.png',
       cachetUrl: ' /assets/personalized cachet for medecin with text replaced with infos from the screenshot.png'
+    },
+    {
+      id: 'ORD002',
+      doctor: 'Dr. Benali Ahmed',
+      specialite: 'Médecin Généraliste',
+      date: '2024-05-22',
+      medications: [
+        { nom: "Ibuprofène 400mg", posologie: "1x/jour", quantite: 8 },
+        { nom: "Vitamine C 500mg", posologie: "1x/jour", quantite: 10 }
+      ],
+      status: 'Active',
+      signatureUrl: '/assets/signature of the same medecin.png',
+      cachetUrl: ' /assets/personalized cachet for medecin with text replaced with infos from the screenshot.png'
     }
   ]);
 
@@ -141,7 +154,8 @@ const PharmacyClientDashboard = () => {
   ];
 
   // --- Tailwind Dashboard Card ---
-  const cardClass = "bg-white rounded-2xl shadow-xl px-8 py-8 w-full max-w-2xl flex flex-col items-stretch";
+  // Change cardClass to use the same background as the page: #faf8f3
+  const cardClass = "bg-[#faf8f3] rounded-2xl shadow-none px-8 py-8 w-full max-w-2xl flex flex-col items-stretch";
 
   // --- Profile ---
   const renderProfile = () => (
@@ -334,7 +348,18 @@ const PharmacyClientDashboard = () => {
                     <div><b>Total:</b> {order.total} DA</div>
                     <div>
                       <b>Statut:</b>
-                      <span className="inline-block rounded px-2 py-1 ml-2 text-xs font-semibold bg-green-50 text-green-700">{order.status}</span>
+                      <span
+                        className={
+                          "inline-block rounded px-3 py-1 ml-2 text-xs font-semibold " +
+                          (order.status === "Livrée"
+                            ? "bg-[#d7f5df] text-[#3d5a40]"
+                            : order.status === "En cours" || order.status === "Acceptée"
+                            ? "bg-[#FFD600] text-[#3d5a40]"
+                            : "bg-[#f4f4f4] text-[#444]")
+                        }
+                      >
+                        {order.status === "En cours" ? "Acceptée" : order.status}
+                      </span>
                     </div>
                   </div>
                   <button
@@ -597,7 +622,18 @@ const PharmacyClientDashboard = () => {
         <div><b>Total:</b> {order.total} DA</div>
         <div>
           <b>Statut:</b>{" "}
-          <span className="inline-block rounded px-2 py-1 ml-2 text-xs font-semibold bg-green-50 text-green-700">{order.status}</span>
+          <span
+            className={
+              "inline-block rounded px-3 py-1 ml-2 text-xs font-semibold " +
+              (order.status === "Livrée"
+                ? "bg-[#d7f5df] text-[#3d5a40]"
+                : order.status === "En cours" || order.status === "Acceptée"
+                ? "bg-[#FFD600] text-[#3d5a40]"
+                : "bg-[#f4f4f4] text-[#444]")
+            }
+          >
+            {order.status === "En cours" ? "Acceptée" : order.status}
+          </span>
         </div>
       </div>
       <h3 className="mt-6 mb-3 font-semibold">Médicaments commandés</h3>
@@ -669,7 +705,10 @@ const PharmacyClientDashboard = () => {
   return (
     <div className="flex min-h-screen bg-[#faf8f3]">
       <aside className="fixed top-0 left-0 h-full w-60 bg-[#3d5a40] text-white flex flex-col items-center z-50 shadow-lg">
-        <div className="text-xl font-bold mt-8 mb-10 tracking-wide">Wech ndir hna </div>
+        <div className="flex items-center gap-3 mt-8 mb-10 tracking-wide text-xl font-bold">
+          <User size={28} />
+          <span>{profile.nom}</span>
+        </div>
         <nav className="flex flex-col w-full gap-0 mt-4">
           {sidebarItems.map((item) => {
             const Icon = item.icon;
