@@ -45,8 +45,8 @@ const PharmacyClientDashboard = () => {
       specialite: 'Médecin Généraliste',
       date: '2024-05-18',
       medications: [
-        { nom: "Amoxicilline 500mg", posologie: "3x/jour", quantite: 10 },
-        { nom: "Doliprane 1000mg", posologie: "2x/jour", quantite: 6 }
+        { nom: "Amoxicilline 500mg", posologie: "3x/jour", quantite: 2 },
+        { nom: "Doliprane 1000mg", posologie: "2x/jour", quantite: 1 }
       ],
       status: 'Active',
       signatureUrl: '/assets/signature of the same medecin.png',
@@ -154,13 +154,13 @@ const PharmacyClientDashboard = () => {
   ];
 
   // --- Tailwind Dashboard Card ---
-  // Change cardClass to use the same background as the page: #faf8f3
-  const cardClass = "bg-[#faf8f3] rounded-2xl shadow-none px-8 py-8 w-full max-w-2xl flex flex-col items-stretch";
+  // Change cardClass to be wider and left-aligned
+  const cardClass = "bg-[#faf8f3] rounded-2xl shadow-none px-12 py-10 w-full max-w-4xl flex flex-col items-stretch ml-0";
 
   // --- Profile ---
   const renderProfile = () => (
     <div className={cardClass}>
-      <h2 className="text-xl font-bold text-khder mb-6">profil</h2>
+      <h2 className="text-xl font-bold text-khder mb-6">Profil</h2>
       <form className="flex flex-col gap-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -208,7 +208,7 @@ const PharmacyClientDashboard = () => {
           </div>
         </div>
         <button
-          className="w-full bg-tchini text-[#222] font-semibold rounded-lg py-3 mt-2 shadow hover:bg-yellow-400 transition"
+          className="bg-yellow-500 text-[#222] font-semibold rounded-lg py-3 mt-2 shadow hover:bg-yellow-600 transition px-8 w-auto self-start"
           type="button"
           onClick={() => setShowEditCard(true)}
         >
@@ -310,7 +310,7 @@ const PharmacyClientDashboard = () => {
           </div>
         </div>
         <div className="flex flex-col md:flex-row gap-4 mt-2">
-          <button className="w-full bg-yellow-500 text-[#222] font-semibold rounded-lg py-3 shadow hover:bg-yellow-400 transition" type="submit">
+          <button className="w-full bg-yellow-500 text-[#222] font-semibold rounded-lg py-3 shadow hover:bg-yellow-600 transition" type="submit">
             Enregistrer
           </button>
           <button
@@ -331,7 +331,7 @@ const PharmacyClientDashboard = () => {
       ? renderOrderDetails(selectedOrder)
       : (
         <div className={cardClass}>
-          <h2 className="text-xl font-bold text-[#3d5a40] mb-6">commandes</h2>
+          <h2 className="text-xl font-bold text-[#3d5a40] mb-6">Commandes</h2>
           <div>
             {orders.length === 0 ? (
               <div className="text-center text-gray-400 py-10">
@@ -352,18 +352,20 @@ const PharmacyClientDashboard = () => {
                         className={
                           "inline-block rounded px-3 py-1 ml-2 text-xs font-semibold " +
                           (order.status === "Livrée"
-                            ? "bg-[#d7f5df] text-[#3d5a40]"
-                            : order.status === "En cours" || order.status === "Acceptée"
-                            ? "bg-[#FFD600] text-[#3d5a40]"
+                            ? "bg-[#d7f5df] text-[#3d5a40]" // greenish
+                            : order.status === "Acceptée"
+                            ? "bg-[#e3f0ff] text-[#2563eb]" // slightly blueish
+                            : order.status === "Non livrée"
+                            ? "bg-[#f4f4f4] text-[#444]"   // slightly greyish
                             : "bg-[#f4f4f4] text-[#444]")
                         }
                       >
-                        {order.status === "En cours" ? "Acceptée" : order.status}
+                        {order.status}
                       </span>
                     </div>
                   </div>
                   <button
-                    className="mt-4 md:mt-0 md:ml-4 bg-yellow-500 text-[#222] font-semibold rounded-lg px-6 py-2 shadow hover:bg-yellow-400 transition"
+                    className="mt-4 md:mt-0 md:ml-4 bg-yellow-500 text-[#222] font-semibold rounded-lg px-6 py-2 shadow hover:bg-yellow-600 transition"
                     onClick={() => setSelectedOrder(order)}
                   >
                     Détails
@@ -399,7 +401,7 @@ const PharmacyClientDashboard = () => {
   // --- Prescriptions ---
   const renderPrescriptions = () => (
     <div className={cardClass}>
-      <h2 className="text-xl font-bold text-[#3d5a40] mb-6"> prescriptions</h2>
+      <h2 className="text-xl font-bold text-[#3d5a40] mb-6"> Prescriptions</h2>
       {prescriptions.length === 0 ? (
         <div className="text-center text-gray-400 py-10">
           <FileText size={64} className="mx-auto mb-2" />
@@ -415,7 +417,7 @@ const PharmacyClientDashboard = () => {
                 <div><b>Date:</b> {prescription.date}</div>
               </div>
               <button
-                className="mt-4 md:mt-0 md:ml-4 bg-yellow-500 text-[#222] font-semibold rounded-lg px-6 py-2 shadow hover:bg-yellow-400 transition"
+                className="mt-4 md:mt-0 md:ml-4 bg-yellow-500 text-[#222] font-semibold rounded-lg px-6 py-2 shadow hover:bg-yellow-600 transition"
                 onClick={() => setSelectedPrescription(prescription)}
               >
                 Détails
@@ -429,8 +431,8 @@ const PharmacyClientDashboard = () => {
 
   // --- Prescription Details ---
   const renderPrescriptionDetails = (prescription) => (
-    <div className="flex flex-col items-center">
-      <div className={cardClass}>
+    <div className="flex flex-col items-center justify-center min-h-screen w-full">
+      <div className="bg-white rounded-2xl shadow-xl px-12 py-10 w-full max-w-2xl flex flex-col items-stretch mx-auto">
         <div className="prescription-layout">
           <div className="mb-6 flex flex-col gap-4">
             <div className="flex flex-col md:flex-row justify-between items-start mb-4">
@@ -485,7 +487,7 @@ const PharmacyClientDashboard = () => {
         </div>
       </div>
       <div className="flex flex-col md:flex-row gap-4 mt-6 w-full max-w-2xl">
-        <button className="w-full bg-yellow-500 text-[#222] font-semibold rounded-lg py-3 shadow hover:bg-yellow-400 transition" onClick={handleDownloadPDF}>
+        <button className="w-full bg-yellow-500 text-[#222] font-semibold rounded-lg py-3 shadow hover:bg-yellow-600 transition" onClick={handleDownloadPDF}>
           Enregistrer
         </button>
         <button
@@ -529,14 +531,14 @@ const PharmacyClientDashboard = () => {
       {!showPasswordForm ? (
         <div className="flex flex-col gap-4">
           <button
-            className="w-full bg-[#3d5a40] text-white font-semibold rounded-lg py-3 shadow hover:bg-[#2d3d2a] transition"
+            className="bg-[#3d5a40] text-white font-semibold rounded-lg py-3 px-8 shadow hover:bg-[#2d3d2a] transition w-auto self-start"
             type="button"
             onClick={() => setShowPasswordForm(true)}
           >
             Changer le mot de passe
           </button>
           <button
-            className="w-full bg-red-100 text-red-600 font-semibold rounded-lg py-3 shadow hover:bg-red-200 transition"
+            className="bg-red-100 text-red-600 font-semibold rounded-lg py-3 px-9 shadow hover:bg-red-200 transition w-auto self-start"
             type="button"
           >
             Supprimer mon compte
@@ -578,7 +580,7 @@ const PharmacyClientDashboard = () => {
             />
           </div>
           <div className="flex flex-col md:flex-row gap-4 mt-2">
-            <button className="w-full bg-yellow-500 text-[#222] font-semibold rounded-lg py-3 shadow hover:bg-yellow-400 transition" type="submit">
+            <button className="w-full bg-yellow-500 text-[#222] font-semibold rounded-lg py-3 shadow hover:bg-yellow-600 transition" type="submit">
               Enregistrer les modifications
             </button>
             <button
@@ -627,12 +629,14 @@ const PharmacyClientDashboard = () => {
               "inline-block rounded px-3 py-1 ml-2 text-xs font-semibold " +
               (order.status === "Livrée"
                 ? "bg-[#d7f5df] text-[#3d5a40]"
-                : order.status === "En cours" || order.status === "Acceptée"
-                ? "bg-[#FFD600] text-[#3d5a40]"
+                : order.status === "Acceptée"
+                ? "bg-[#e3f0ff] text-[#2563eb]"
+                : order.status === "Non livrée"
+                ? "bg-[#f4f4f4] text-[#444]"
                 : "bg-[#f4f4f4] text-[#444]")
             }
           >
-            {order.status === "En cours" ? "Acceptée" : order.status}
+            {order.status}
           </span>
         </div>
       </div>
@@ -729,7 +733,7 @@ const PharmacyClientDashboard = () => {
           })}
         </nav>
       </aside>
-      <main className="flex-1 ml-60 flex flex-col items-center py-10 px-6 bg-[#faf8f3] min-h-screen">
+      <main className="flex-1 ml-60 flex flex-col items-start py-10 px-12 bg-[#faf8f3] min-h-screen w-full">
         {renderContent()}
       </main>
     </div>

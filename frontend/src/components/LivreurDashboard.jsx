@@ -3,6 +3,7 @@ import { User, Truck, Home } from "lucide-react"; // Replace UserRound with Truc
 
 // Mock data
 const livreurProfile = {
+  id: "LIV001",
   nom: "Ali Benali",
   email: "ali.livreur@mail.com",
   telephone: "+213 555 123 456",
@@ -37,6 +38,7 @@ const commandesData = [
         date: "2024-05-22",
         status: "En cours",
         total: "850 DA",
+        livreurId: "LIV001",
       },
       {
         id: "CMD002",
@@ -46,6 +48,7 @@ const commandesData = [
         date: "2024-05-21",
         status: "Livrée",
         total: "320 DA",
+        livreurId: "LIV002",
       },
     ],
   },
@@ -61,6 +64,7 @@ const commandesData = [
         date: "2024-05-20",
         status: "Non livrée",
         total: "410 DA",
+        livreurId: "LIV001",
       },
     ],
   },
@@ -69,7 +73,7 @@ const commandesData = [
 const sidebarItems = [
   { id: "profile", label: "Mon profil", icon: User },
   { id: "pharmacies", label: "Pharmacies", icon: Home },
-  { id: "commandes", label: "Commandes", icon: Truck },
+  { id: "commandes", label: "Livraisons", icon: Truck },
 ];
 
 const statusColor = (status) => {
@@ -88,29 +92,63 @@ const LivreurDashboard = () => {
   const [activeSection, setActiveSection] = useState("profile");
   const [commandes, setCommandes] = useState(commandesData);
 
+  // Filter commandes to only show those assigned to the logged-in livreur
+  const myCommandes = commandesData
+    .map((pharmacy) => ({
+      ...pharmacy,
+      commandes: pharmacy.commandes.filter(
+        (cmd) => cmd.livreurId === livreurProfile.id
+      ),
+    }))
+    .filter((pharmacy) => pharmacy.commandes.length > 0);
+
   // Profile section (read-only)
   const renderProfile = () => (
-    <div className="bg-lfond rounded-2xl shadow-none px-8 py-8 w-full max-w-xl flex flex-col items-stretch mt-10">
-      <h2 className="text-xl font-bold text-khder mb-6">profil</h2>
+    <div className="bg-lfond rounded-2xl shadow-none px-12 py-10 w-full max-w-4xl flex flex-col items-stretch ml-0">
+      <h2 className="text-xl font-bold text-khder mb-6">Profil</h2>
       <form className="flex flex-col gap-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-khder font-semibold mb-1">Nom complet</label>
-            <input type="text" value={livreurProfile.nom} disabled className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222]" />
+            <label className="block text-khder font-semibold mb-1">
+              Nom complet
+            </label>
+            <input
+              type="text"
+              value={livreurProfile.nom}
+              disabled
+              className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222]"
+            />
           </div>
           <div>
             <label className="block text-khder font-semibold mb-1">Email</label>
-            <input type="email" value={livreurProfile.email} disabled className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222]" />
+            <input
+              type="email"
+              value={livreurProfile.email}
+              disabled
+              className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222]"
+            />
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-khder font-semibold mb-1">Téléphone</label>
-            <input type="text" value={livreurProfile.telephone} disabled className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222]" />
+            <label className="block text-khder font-semibold mb-1">
+              Téléphone
+            </label>
+            <input
+              type="text"
+              value={livreurProfile.telephone}
+              disabled
+              className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222]"
+            />
           </div>
           <div>
             <label className="block text-khder font-semibold mb-1">Adresse</label>
-            <input type="text" value={livreurProfile.adresse} disabled className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222]" />
+            <input
+              type="text"
+              value={livreurProfile.adresse}
+              disabled
+              className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222]"
+            />
           </div>
         </div>
       </form>
@@ -119,7 +157,7 @@ const LivreurDashboard = () => {
 
   // Pharmacies section
   const renderPharmacies = () => (
-    <div className="bg-lfond rounded-2xl shadow-none px-8 py-8 w-full max-w-xl flex flex-col items-stretch mt-10">
+    <div className="bg-lfond rounded-2xl shadow-none px-12 py-10 w-full max-w-4xl flex flex-col items-stretch ml-0">
       <h2 className="text-xl font-bold text-khder mb-6">Pharmacies</h2>
       <div className="flex flex-col gap-4">
         {pharmaciesList.map((ph, idx) => (
@@ -130,7 +168,9 @@ const LivreurDashboard = () => {
             <div>
               <b>{ph.nom}</b>
               <div className="text-[0.98rem]">📍 {ph.adresse}</div>
-              <div className="text-[0.98rem]">📞 {ph.telephone} | ✉️ {ph.email}</div>
+              <div className="text-[0.98rem]">
+                📞 {ph.telephone} | ✉️ {ph.email}
+              </div>
             </div>
           </div>
         ))}
@@ -140,11 +180,11 @@ const LivreurDashboard = () => {
 
   // Commandes section (table)
   const renderCommandes = () => (
-    <div className="w-full flex flex-col gap-8 mt-10">
-      {commandes.map((pharmacy, idx) => (
+    <div className="w-full flex flex-col gap-8 mt-10 items-start">
+      {myCommandes.map((pharmacy, idx) => (
         <div
           key={idx}
-          className="bg-lfond rounded-[32px] shadow-none px-8 py-8 w-full max-w-3xl flex flex-col items-stretch"
+          className="bg-lfond rounded-2xl shadow-none px-12 py-10 w-full max-w-4xl flex flex-col items-stretch ml-0"
         >
           <div className="mb-2">
             <h2 className="text-2xl font-bold text-khder text-left mb-2 font-sans">
@@ -259,7 +299,7 @@ const LivreurDashboard = () => {
   );
 
   const handleStatusClick = (pharmacyIdx, cmdIdx) => {
-    setCommandes(prev =>
+    setCommandes((prev) =>
       prev.map((ph, pIdx) =>
         pIdx !== pharmacyIdx
           ? ph

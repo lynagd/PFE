@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, FileText, Settings, LogOut, Users, Pencil, UserRound } from 'lucide-react';
+import { User, FileText, Settings, LogOut, Users, Pencil, Stethoscope } from 'lucide-react';
 import Barcode from 'react-barcode';
 
 const samplePatients = [
@@ -13,8 +13,8 @@ const samplePatients = [
 				id: 'ORD001',
 				date: '2024-05-18',
 				medications: [
-					{ nom: 'Amoxicilline 500mg', posologie: '3x/jour', quantite: 10 },
-					{ nom: 'Doliprane 1000mg', posologie: '2x/jour', quantite: 6 }
+					{ nom: 'Amoxicilline 500mg', posologie: '3x/jour', quantite: 2 },
+					{ nom: 'Doliprane 1000mg', posologie: '2x/jour', quantite: 1 }
 				],
 				doctor: 'Dr. Yacine B.',
 				specialite: 'Médecin Généraliste'
@@ -79,10 +79,10 @@ const DoctorDashboard = () => {
 
 	// Sidebar
 	const sidebarItems = [
-		{ id: 'profile', icon: User, label: ' profil' },
-		{ id: 'patients', icon: Users, label: 'patients' },
-		{ id: 'settings', icon: Settings, label: 'Paramètres' },
-		{ id: 'logout', icon: LogOut, label: 'Déconnexion' }
+		{ id: 'profile', icon: User, label: ' Profil' },
+		{ id: 'patients', icon: Users, label: ' Patients' },
+		{ id: 'settings', icon: Settings, label: ' Paramètres' },
+		{ id: 'logout', icon: LogOut, label: ' Déconnexion' }
 	];
 
 	// Profile section
@@ -99,8 +99,8 @@ const DoctorDashboard = () => {
 
 	// Main profile card (read-only)
 	const renderProfile = () => (
-		<div className="bg-lfond rounded-2xl shadow-none px-8 py-8 w-full max-w-2xl flex flex-col items-stretch">
-			<h2 className="text-xl font-bold text-khder mb-6"> profil</h2>
+		<div className="bg-[#faf8f3] rounded-2xl shadow-none px-12 py-10 w-full max-w-4xl flex flex-col items-stretch ml-0">
+			<h2 className="text-xl font-bold text-khder mb-6"> Profil</h2>
 			<form className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
 				<div>
 					<label className="block text-khder font-semibold mb-1">Nom complet</label>
@@ -220,7 +220,7 @@ const DoctorDashboard = () => {
 				</div>
 				<div className="md:col-span-2">
 					<button
-						className="bg-[#FFD600] text-[#222] font-bold rounded-lg py-3 px-8 mt-2 shadow hover:bg-yellow-400 transition w-full md:w-auto text-center md:text-left"
+						className="bg-yellow-500 text-[#222] font-bold rounded-lg py-3 px-8 mt-2 shadow hover:bg-yellow-600 transition w-full md:w-auto text-center md:text-left"
 						type="button"
 						onClick={() => setShowEditCard(true)}
 						style={{ justifyContent: 'flex-start' }}
@@ -234,7 +234,7 @@ const DoctorDashboard = () => {
 
 	// Edit card for modifiable fields
 	const renderEditCard = () => (
-		<div className="bg-lfond rounded-2xl shadow-none px-8 py-8 w-full max-w-2xl flex flex-col items-stretch">
+		<div className="bg-[#faf8f3] rounded-2xl shadow-none px-12 py-10 w-full max-w-4xl flex flex-col items-stretch ml-0">
 			<h2 className="text-xl font-bold text-khder mb-6">Modifier informations</h2>
 			<form className="flex flex-col gap-6" onSubmit={handleSaveChanges}>
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -325,7 +325,7 @@ const DoctorDashboard = () => {
 				</div>
 				<div className="flex flex-col md:flex-row gap-4 mt-2">
 					<button
-						className="w-full bg-khder text-white font-semibold rounded-lg py-3 shadow hover:bg-[#2d3d2a] transition"
+						className="w-full bg-yellow-500 text-[#222] font-semibold rounded-lg py-3 shadow hover:bg-yellow-600 transition"
 						type="submit"
 					>
 						Enregistrer
@@ -344,8 +344,8 @@ const DoctorDashboard = () => {
 
 	// Patients list
 	const renderPatients = () => (
-		<div className="bg-lfond rounded-2xl shadow-none px-8 py-8 w-full max-w-2xl flex flex-col items-stretch">
-			<h2 className="text-xl font-bold text-khder mb-6"> patients</h2>
+		<div className="bg-[#faf8f3] rounded-2xl shadow-none px-12 py-10 w-full max-w-4xl flex flex-col items-stretch ml-0">
+			<h2 className="text-xl font-bold text-khder mb-6"> Patients</h2>
 			{patients.length === 0 ? (
 				<div className="text-center text-gray-400 py-10">
 					<Users size={64} className="mx-auto mb-2" />
@@ -375,7 +375,7 @@ const DoctorDashboard = () => {
 									Voir les prescriptions
 								</button>
 								<button
-									className="bg-tchini text-[#222] font-semibold rounded-lg px-4 py-2 shadow hover:bg-yellow-400 transition w-44 text-sm"
+									className="bg-yellow-500 text-[#222] font-semibold rounded-lg px-4 py-2 shadow hover:bg-yellow-600 transition w-44 text-sm"
 									style={{ minWidth: '120px' }}
 									onClick={() => {
 										setSelectedPatient(patient);
@@ -394,7 +394,7 @@ const DoctorDashboard = () => {
 
 	// Patient's prescriptions
 	const renderPatientPrescriptions = (patient) => (
-		<div className="bg-lfond rounded-2xl shadow-none px-8 py-8 w-full max-w-2xl flex flex-col items-stretch">
+		<div className="bg-[#faf8f3] rounded-2xl shadow-none px-12 py-10 w-full max-w-4xl flex flex-col items-stretch ml-0">
 			<h2 className="text-xl font-bold text-khder mb-6">
 				Ordonnances de {patient.nom} {patient.prenom}
 			</h2>
@@ -416,7 +416,7 @@ const DoctorDashboard = () => {
 								</div>
 							</div>
 							<button
-								className="bg-tchini text-[#222] font-semibold rounded-lg px-4 py-2 shadow hover:bg-yellow-400 transition mt-4 md:mt-0"
+								className="bg-yellow-500 text-[#222] font-semibold rounded-lg px-4 py-2 shadow hover:bg-yellow-600 transition mt-4 md:mt-0"
 								onClick={() => setSelectedPrescription(presc)}
 							>
 								Détails
@@ -425,9 +425,9 @@ const DoctorDashboard = () => {
 					))}
 				</div>
 			)}
-			<div className="flex justify-center gap-4 mt-8">
+			<div className="flex justify-end gap-4 mt-8 w-full">
 				<button
-					className="bg-gray-400 text-white font-semibold rounded-lg px-6 py-2 shadow hover:bg-gray-500 transition"
+					className="bg-gray-400 text-white font-semibold rounded-lg px-7 py-2 shadow hover:bg-gray-500 transition w-full md:w-auto"
 					onClick={() => setSelectedPatient(null)}
 				>
 					Retourner
@@ -438,8 +438,8 @@ const DoctorDashboard = () => {
 
 	// Ordonnance details (same style as client)
 	const renderPrescriptionDetails = (presc) => (
-		<div className="flex flex-col items-center">
-			<div className="bg-white rounded-2xl shadow-xl px-8 py-8 w-full max-w-2xl flex flex-col items-stretch">
+		<div className="flex flex-col items-center justify-center min-h-screen w-full">
+			<div className="bg-white rounded-2xl shadow-xl px-8 py-8 w-full max-w-2xl flex flex-col items-stretch mx-auto">
 				<div>
 					<div className="flex flex-col gap-4">
 						<div className="flex flex-col md:flex-row justify-between items-start mb-4">
@@ -507,9 +507,9 @@ const DoctorDashboard = () => {
 					</div>
 				</div>
 			</div>
-			<div className="flex justify-center gap-4 mt-8">
+			<div className="flex justify-center gap-4 mt-8 w-full max-w-2xl">
 				<button
-					className="bg-gray-400 text-white font-semibold rounded-lg px-6 py-2 shadow hover:bg-gray-500 transition"
+					className="bg-gray-400 text-white font-semibold rounded-lg px-9 py-2 shadow hover:bg-gray-500 transition w-auto self-end"
 					onClick={() => setSelectedPrescription(null)}
 				>
 					Retourner
@@ -562,7 +562,7 @@ const DoctorDashboard = () => {
 	};
 
 	const renderAddPrescription = () => (
-		<div className="bg-lfond rounded-2xl shadow-none px-8 py-8 w-full max-w-2xl flex flex-col items-stretch">
+		<div className="bg-[#faf8f3] rounded-2xl shadow-none px-12 py-10 w-full max-w-4xl flex flex-col items-stretch ml-0">
 			<h2 className="text-xl font-bold text-khder mb-6">Ajouter une ordonnance</h2>
 			<form className="flex flex-col gap-6" onSubmit={handlePrescriptionSubmit}>
 				<div>
@@ -618,7 +618,7 @@ const DoctorDashboard = () => {
 					))}
 					<button
 						type="button"
-						className="bg-tchini text-[#222] font-semibold rounded-lg px-4 py-2 shadow hover:bg-yellow-400 transition mt-2"
+						className="bg-yellow-500 text-[#222] font-semibold rounded-lg px-4 py-2 shadow hover:bg-yellow-600 transition mt-2"
 						onClick={handleAddMed}
 					>
 						Ajouter un médicament
@@ -644,17 +644,93 @@ const DoctorDashboard = () => {
 	);
 
 	// Settings (copy from client)
+	const [showPasswordForm, setShowPasswordForm] = useState(false);
+	const [passwordFields, setPasswordFields] = useState({
+		current: '',
+		new: '',
+		confirm: ''
+	});
+
+	const handlePasswordChange = (e) => {
+		const { name, value } = e.target;
+		setPasswordFields({ ...passwordFields, [name]: value });
+	};
+
+	const handlePasswordSubmit = (e) => {
+		e.preventDefault();
+		setShowPasswordForm(false);
+		setPasswordFields({ current: '', new: '', confirm: '' });
+	};
+
 	const renderSettings = () => (
-		<div className="bg-white rounded-2xl shadow-xl px-8 py-8 w-full max-w-2xl flex flex-col items-stretch">
+		<div className="bg-[#faf8f3] rounded-2xl shadow-none px-12 py-10 w-full max-w-4xl flex flex-col items-stretch ml-0">
 			<h2 className="text-xl font-bold text-khder mb-6">Paramètres</h2>
-			<div className="flex flex-col gap-4 mt-4">
-				<button className="bg-khder text-white font-semibold rounded-lg py-3 shadow hover:bg-[#2d3d2a] transition" type="button">
-					Changer le mot de passe
-				</button>
-				<button className="bg-red-100 text-red-600 font-semibold rounded-lg py-3 shadow hover:bg-red-200 transition" type="button">
-					Supprimer mon compte
-				</button>
-			</div>
+			{!showPasswordForm ? (
+				<div className="flex flex-col gap-4">
+					<button
+						className="bg-khder text-white font-semibold rounded-lg py-3 px-8 shadow hover:bg-[#2d3d2a] transition w-auto self-start"
+						type="button"
+						onClick={() => setShowPasswordForm(true)}
+					>
+						Changer le mot de passe
+					</button>
+					<button
+						className="bg-red-100 text-red-600 font-semibold rounded-lg py-3 px-8 shadow hover:bg-red-200 transition w-auto self-start"
+						type="button"
+					>
+						Supprimer mon compte
+					</button>
+				</div>
+			) : (
+				<form className="flex flex-col gap-4" onSubmit={handlePasswordSubmit}>
+					<div>
+						<label className="block text-[#355c3a] font-semibold mb-1">Mot de passe actuel</label>
+						<input
+							type="password"
+							name="current"
+							value={passwordFields.current}
+							onChange={handlePasswordChange}
+							required
+							className="w-full px-4 py-3 rounded-lg border border-[#d2e3db] bg-[#f8faf8] text-[#222]"
+						/>
+					</div>
+					<div>
+						<label className="block text-[#355c3a] font-semibold mb-1">Nouveau mot de passe</label>
+						<input
+							type="password"
+							name="new"
+							value={passwordFields.new}
+							onChange={handlePasswordChange}
+							required
+							className="w-full px-4 py-3 rounded-lg border border-[#d2e3db] bg-[#f8faf8] text-[#222]"
+						/>
+					</div>
+					<div>
+						<label className="block text-[#355c3a] font-semibold mb-1">Confirmer le nouveau mot de passe</label>
+						<input
+							type="password"
+							name="confirm"
+							value={passwordFields.confirm}
+							onChange={handlePasswordChange}
+							required
+							className="w-full px-4 py-3 rounded-lg border border-[#d2e3db] bg-[#f8faf8] text-[#222]"
+						/>
+					</div>
+					<div className="flex flex-col md:flex-row gap-4 mt-2">
+						<button className="w-full bg-yellow-500 text-[#222] font-semibold rounded-lg py-3 shadow hover:bg-yellow-600 transition" type="submit">
+							Enregistrer les modifications
+						</button>
+						<button
+							type="button"
+							className="w-full bg-gray-400 text-white font-semibold rounded-lg py-3 shadow hover:bg-gray-500 transition"
+							onClick={() => setShowPasswordForm(false)}
+						>
+							Annuler
+						</button>
+					</div>
+				</form>
+			)}
+			<hr className="my-8" />
 		</div>
 	);
 
@@ -684,7 +760,9 @@ const DoctorDashboard = () => {
 		<div className="flex min-h-screen bg-lfond">
 			<aside className="fixed top-0 left-0 h-full w-60 bg-[#3d5a40] text-white flex flex-col items-center z-50 shadow-lg">
 				<div className="flex items-center gap-3 mt-8 mb-10 tracking-wide text-lg font-bold">
-					<UserRound size={32} className="text-white rounded-full p-1 shadow" />
+					<span className="flex items-center justify-center bg-[#355c3a] rounded-full w-12 h-12 shadow">
+						<Stethoscope size={28} className="text-white" />
+					</span>
 					<div className="flex flex-col">
 						<span className="leading-tight">{profile.nom}</span>
 						<span className="text-sm font-normal text-white">{profile.specialite}</span>
@@ -710,7 +788,7 @@ const DoctorDashboard = () => {
 					})}
 				</nav>
 			</aside>
-			<main className="flex-1 ml-60 flex flex-col items-center py-10 px-6 bg-lfond min-h-screen">
+			<main className="flex-1 ml-60 flex flex-col items-start py-10 px-12 bg-[#faf8f3] min-h-screen w-full">
 				{content}
 			</main>
 		</div>

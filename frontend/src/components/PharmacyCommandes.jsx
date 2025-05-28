@@ -76,6 +76,14 @@ const PharmacyCommandes = () => {
       ...prev,
       [commandes[selectedCommandeIdx].id]: livreur,
     }));
+    // Update the commande with the assigned livreurId
+    setCommandes((prev) =>
+      prev.map((cmd, i) =>
+        i === selectedCommandeIdx
+          ? { ...cmd, livreurId: livreur.id }
+          : cmd
+      )
+    );
     setShowLivreurModal(false);
     setSelectedCommandeIdx(null);
   };
