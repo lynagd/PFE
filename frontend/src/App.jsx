@@ -4,12 +4,13 @@ import Login from "./components/Login.jsx";
 import Register from "./components/Register.jsx";
 import PharmacyProfile from "./components/PharmacyProfile.jsx";
 import NearbyPharmacies from "./components/NearbyPharmacies.jsx";
-import PharmacyClientDashboard from './components/ClientDashboard.jsx'
-import LivreurDashboard from "./components/LivreurDashboard.jsx";
-import DoctorDashboard from "./components/DoctorDashboard.jsx";
+import DoctorDashboardPage from "./Pages/DoctorDashboardPage.jsx";
 import PharmacyLivreurs from "./components/PharmacyLivreurs.jsx";
 import PharmacyCommandes from "./components/PharmacyCommandes.jsx";
 import PharmacyDashboard from "./components/PharmacyDashboard.jsx";
+import ClientDashboardPage from "./Pages/ClientDashboardPage.jsx";
+import LivreurDashboardPage from "./Pages/LivreurDashboardPage.jsx";
+
 
 function App() {
   const [patients, setPatients] = useState([
@@ -63,9 +64,9 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/nearby-pharmacies" element={<NearbyPharmacies />} />
-        <Route path="/doctor" element={<DoctorDashboard patients={patients} setPatients={setPatients} />} />
-        <Route path="/client-dashboard" element={<PharmacyClientDashboard />} />
-        <Route path="/livreur" element={<LivreurDashboard />} />
+        <Route path="/doctor" element={<DoctorDashboardPage />} />
+        <Route path="/client-dashboard" element={<ClientDashboardPage />} />
+        <Route path="/livreur" element={<LivreurDashboardPage />} />
         <Route path="/pharmacy-profile" element={<PharmacyProfile />} />
         <Route path="/pharmacy-livreurs" element={<PharmacyLivreurs />} />
         <Route path="/pharmacy-commandes" element={<PharmacyCommandes />} />
