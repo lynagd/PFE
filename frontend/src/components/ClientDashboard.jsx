@@ -31,7 +31,7 @@ const PharmacyClientDashboard = () => {
       id: 'CMD002',
       date: '2024-05-18',
       total: 320,
-      status: 'En cours',
+      status: 'Acceptée',
       pharmacy: 'Pharmacie du Centre',
       items: [
         { nom: "Ibuprofène 400mg", posologie: "1x/jour", quantite: 2, prix: 160 }
@@ -82,21 +82,25 @@ const PharmacyClientDashboard = () => {
   };
 
   const [profile, setProfile] = useState({
-    nom: "Ahmed Benali",
+    nom: "Ahmed",
+    prenom: "Benali",
     email: "ahmed.benali@email.com",
     date_naissance: "1990-05-12",
-    sexe: "Homme",
+    sexe: "Masculin",
     wilaya: "Alger",
     commune: "Bab Ezzouar",
     adresse: "123 Rue des Martyrs, Bab Ezzouar, Alger",
     telephone: "+213 555 123 456"
   });
   const [editProfile, setEditProfile] = useState({
+    nom: profile.nom,
+    prenom: profile.prenom,
     email: profile.email,
     adresse: profile.adresse,
     wilaya: profile.wilaya,
     commune: profile.commune,
-    telephone: profile.telephone
+    telephone: profile.telephone,
+    sexe: profile.sexe
   });
   const [isEditing, setIsEditing] = useState(false);
   const [showEditCard, setShowEditCard] = useState(false);
@@ -142,6 +146,9 @@ const PharmacyClientDashboard = () => {
       commune: false,
       adresse: false,
       telephone: false,
+      nom: false,
+      prenom: false,
+      sexe: false,
     });
   };
 
@@ -164,48 +171,52 @@ const PharmacyClientDashboard = () => {
       <form className="flex flex-col gap-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-khder font-semibold mb-1">Nom complet</label>
+            <label className="block text-khder font-semibold mb-1">Nom</label>
             <input type="text" value={profile.nom} disabled className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222]" />
           </div>
+          <div>
+            <label className="block text-khder font-semibold mb-1">Prénom</label>
+            <input type="text" value={profile.prenom} disabled className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222]" />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-khder font-semibold mb-1">Email</label>
             <input type="email" value={profile.email} disabled className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222]" />
           </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-khder font-semibold mb-1">Date de naissance</label>
             <input type="text" value={profile.date_naissance} disabled className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222]" />
           </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-khder font-semibold mb-1">Sexe</label>
             <input type="text" value={profile.sexe} disabled className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222]" />
           </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-khder font-semibold mb-1">Wilaya</label>
             <input type="text" value={profile.wilaya} disabled className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222]" />
           </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-khder font-semibold mb-1">Commune</label>
             <input type="text" value={profile.commune} disabled className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222]" />
           </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-khder font-semibold mb-1">Téléphone</label>
             <input type="tel" value={profile.telephone} disabled className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222]" />
           </div>
-          <div>
-            <label className="block text-khder font-semibold mb-1">Adresse</label>
-            <textarea
-              value={profile.adresse}
-              disabled
-              rows={1}
-              className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222] resize-none h-[52px] min-h-[52px] max-h-[52px] overflow-hidden"
-            />
-          </div>
+        </div>
+        <div>
+          <label className="block text-khder font-semibold mb-1">Adresse</label>
+          <textarea
+            value={profile.adresse}
+            disabled
+            rows={1}
+            className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222] resize-none h-[52px] min-h-[52px] max-h-[52px] overflow-hidden"
+          />
         </div>
         <button
           className="bg-yellow-500 text-[#222] font-semibold rounded-lg py-3 mt-2 shadow hover:bg-yellow-600 transition px-8 w-auto self-start"
@@ -225,12 +236,82 @@ const PharmacyClientDashboard = () => {
       <form className="flex flex-col gap-6" onSubmit={handleSaveChanges}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
+            <label className="block text-[#355c3a] font-semibold mb-1">Nom</label>
+            <div className="relative">
+              <input
+                type="text"
+                name="nom"
+                value={editProfile.nom}
+                onChange={handleProfileEdit}
+                required
+                className="w-full px-4 py-3 rounded-lg border border-[#d2e3db] bg-[#f8faf8] text-[#222]"
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#3d5a40]">
+                <Pencil size={18} />
+              </span>
+            </div>
+          </div>
+          <div>
+            <label className="block text-[#355c3a] font-semibold mb-1">Prénom</label>
+            <div className="relative">
+              <input
+                type="text"
+                name="prenom"
+                value={editProfile.prenom}
+                onChange={handleProfileEdit}
+                required
+                className="w-full px-4 py-3 rounded-lg border border-[#d2e3db] bg-[#f8faf8] text-[#222]"
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#3d5a40]">
+                <Pencil size={18} />
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
             <label className="block text-[#355c3a] font-semibold mb-1">Email</label>
             <div className="relative">
               <input
                 type="email"
                 name="email"
                 value={editProfile.email}
+                onChange={handleProfileEdit}
+                required
+                className="w-full px-4 py-3 rounded-lg border border-[#d2e3db] bg-[#f8faf8] text-[#222]"
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#3d5a40]">
+                <Pencil size={18} />
+              </span>
+            </div>
+          </div>
+          <div>
+            <label className="block text-[#355c3a] font-semibold mb-1">Sexe</label>
+            <div className="relative">
+              <select
+                name="sexe"
+                value={editProfile.sexe}
+                onChange={handleProfileEdit}
+                required
+                className="w-full px-4 py-3 rounded-lg border border-[#d2e3db] bg-[#f8faf8] text-[#222] appearance-none"
+              >
+                <option value="Masculin">Masculin</option>
+                <option value="Féminin">Féminin</option>
+              </select>
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#3d5a40]">
+                <Pencil size={18} />
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-[#355c3a] font-semibold mb-1">Wilaya</label>
+            <div className="relative">
+              <input
+                type="text"
+                name="wilaya"
+                value={editProfile.wilaya}
                 onChange={handleProfileEdit}
                 required
                 className="w-full px-4 py-3 rounded-lg border border-[#d2e3db] bg-[#f8faf8] text-[#222]"
@@ -259,12 +340,12 @@ const PharmacyClientDashboard = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-[#355c3a] font-semibold mb-1">Wilaya</label>
+            <label className="block text-[#355c3a] font-semibold mb-1">Téléphone</label>
             <div className="relative">
               <input
-                type="text"
-                name="wilaya"
-                value={editProfile.wilaya}
+                type="tel"
+                name="telephone"
+                value={editProfile.telephone}
                 onChange={handleProfileEdit}
                 required
                 className="w-full px-4 py-3 rounded-lg border border-[#d2e3db] bg-[#f8faf8] text-[#222]"
@@ -284,24 +365,6 @@ const PharmacyClientDashboard = () => {
                 onChange={handleProfileEdit}
                 required
                 className="w-full px-4 py-3 rounded-lg border border-[#d2e3db] bg-[#f8faf8] text-[#222] resize-none"
-              />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#3d5a40]">
-                <Pencil size={18} />
-              </span>
-            </div>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-[#355c3a] font-semibold mb-1">Téléphone</label>
-            <div className="relative">
-              <input
-                type="tel"
-                name="telephone"
-                value={editProfile.telephone}
-                onChange={handleProfileEdit}
-                required
-                className="w-full px-4 py-3 rounded-lg border border-[#d2e3db] bg-[#f8faf8] text-[#222]"
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#3d5a40]">
                 <Pencil size={18} />
@@ -354,7 +417,7 @@ const PharmacyClientDashboard = () => {
                           (order.status === "Livrée"
                             ? "bg-[#d7f5df] text-[#3d5a40]" // greenish
                             : order.status === "Acceptée"
-                            ? "bg-[#e3f0ff] text-[#2563eb]" // slightly blueish
+                            ? "bg-[#fff7d6] text-[#8d7b2a]" // slightly yellowish
                             : order.status === "Non livrée"
                             ? "bg-[#f4f4f4] text-[#444]"   // slightly greyish
                             : "bg-[#f4f4f4] text-[#444]")
@@ -630,7 +693,7 @@ const PharmacyClientDashboard = () => {
               (order.status === "Livrée"
                 ? "bg-[#d7f5df] text-[#3d5a40]"
                 : order.status === "Acceptée"
-                ? "bg-[#e3f0ff] text-[#2563eb]"
+                ? "bg-[#fff7d6] text-[#8d7b2a]"
                 : order.status === "Non livrée"
                 ? "bg-[#f4f4f4] text-[#444]"
                 : "bg-[#f4f4f4] text-[#444]")
@@ -711,7 +774,7 @@ const PharmacyClientDashboard = () => {
       <aside className="fixed top-0 left-0 h-full w-60 bg-[#3d5a40] text-white flex flex-col items-center z-50 shadow-lg">
         <div className="flex items-center gap-3 mt-8 mb-10 tracking-wide text-xl font-bold">
           <User size={28} />
-          <span>{profile.nom}</span>
+          <span>{profile.nom} {profile.prenom}</span>
         </div>
         <nav className="flex flex-col w-full gap-0 mt-4">
           {sidebarItems.map((item) => {

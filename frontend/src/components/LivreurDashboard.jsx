@@ -4,7 +4,12 @@ import { User, Truck, Home } from "lucide-react"; // Replace UserRound with Truc
 // Mock data
 const livreurProfile = {
   id: "LIV001",
-  nom: "Ali Benali",
+  nom: "Ali",
+  prenom: "Benali",
+  sexe: "Masculin",
+  dateNaissance: "1990-04-15",
+  wilaya: "Alger",
+  commune: "Bab El Oued",
   email: "ali.livreur@mail.com",
   telephone: "+213 555 123 456",
   adresse: "45, Rue des Palmiers, Alger",
@@ -78,11 +83,10 @@ const sidebarItems = [
 
 const statusColor = (status) => {
   if (status === "En cours" || status === "Acceptée")
-    // Acceptée: pale yellow background, dark yellow text, bold (like screenshot)
     return "bg-[#fff7d6] text-[#8d7b2a] font-bold rounded-xl px-6 py-3 text-base shadow-none border-none flex items-center justify-center";
   if (status === "Livrée")
-    // Livrée: slightly darker blue background, green text, bold
-    return "bg-[#dbeaf3] text-[#3d5a40] font-bold rounded-xl px-6 py-3 text-base shadow-none border-none flex items-center justify-center";
+    // Livrée: blue background, blue text (matches background)
+    return "bg-[#dbeaf3] text-[#3d8abf] font-bold rounded-xl px-6 py-3 text-base shadow-none border-none flex items-center justify-center";
   if (status === "Non livrée" || status === "En attente")
     return "bg-[#f4f4f4] text-[#444] font-bold rounded-xl px-6 py-3 text-base shadow-none border-none flex items-center justify-center";
   return "bg-gray-300 text-[#222] font-bold rounded-xl px-6 py-3 text-base shadow-none border-none flex items-center justify-center";
@@ -93,7 +97,7 @@ const LivreurDashboard = () => {
   const [commandes, setCommandes] = useState(commandesData);
 
   // Filter commandes to only show those assigned to the logged-in livreur
-  const myCommandes = commandesData
+  const myCommandes = commandes
     .map((pharmacy) => ({
       ...pharmacy,
       commandes: pharmacy.commandes.filter(
@@ -109,16 +113,61 @@ const LivreurDashboard = () => {
       <form className="flex flex-col gap-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-khder font-semibold mb-1">
-              Nom complet
-            </label>
+            <label className="block text-khder font-semibold mb-1">Nom</label>
             <input
               type="text"
-              value={livreurProfile.nom}
+              value={livreurProfile.nom || ""}
               disabled
               className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222]"
             />
           </div>
+          <div>
+            <label className="block text-khder font-semibold mb-1">Prénom</label>
+            <input
+              type="text"
+              value={livreurProfile.prenom || ""}
+              disabled
+              className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222]"
+            />
+          </div>
+          <div>
+            <label className="block text-khder font-semibold mb-1">Sexe</label>
+            <input
+              type="text"
+              value={livreurProfile.sexe || ""}
+              disabled
+              className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222]"
+            />
+          </div>
+          <div>
+            <label className="block text-khder font-semibold mb-1">Date de naissance</label>
+            <input
+              type="text"
+              value={livreurProfile.dateNaissance || ""}
+              disabled
+              className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222]"
+            />
+          </div>
+          <div>
+            <label className="block text-khder font-semibold mb-1">Wilaya</label>
+            <input
+              type="text"
+              value={livreurProfile.wilaya || ""}
+              disabled
+              className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222]"
+            />
+          </div>
+          <div>
+            <label className="block text-khder font-semibold mb-1">Commune</label>
+            <input
+              type="text"
+              value={livreurProfile.commune || ""}
+              disabled
+              className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222]"
+            />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-khder font-semibold mb-1">Email</label>
             <input
@@ -128,12 +177,8 @@ const LivreurDashboard = () => {
               className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222]"
             />
           </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-khder font-semibold mb-1">
-              Téléphone
-            </label>
+            <label className="block text-khder font-semibold mb-1">Téléphone</label>
             <input
               type="text"
               value={livreurProfile.telephone}
@@ -141,7 +186,7 @@ const LivreurDashboard = () => {
               className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222]"
             />
           </div>
-          <div>
+          <div className="md:col-span-2">
             <label className="block text-khder font-semibold mb-1">Adresse</label>
             <input
               type="text"
@@ -252,7 +297,7 @@ const LivreurDashboard = () => {
                           {cmd.total}
                         </td>
                         <td className="py-4 px-4 align-top font-sans">
-                          {cmd.status === "En cours" ? (
+                          {cmd.status === "En cours" || cmd.status === "Acceptée" ? (
                             <span
                               className={statusColor("Acceptée")}
                               style={{
@@ -263,6 +308,7 @@ const LivreurDashboard = () => {
                                 justifyContent: "center",
                                 boxShadow: "none",
                                 border: "none",
+                                cursor: "pointer",
                               }}
                               title="Cliquer pour marquer comme Livrée"
                               onClick={() => handleStatusClick(idx, i)}
@@ -308,7 +354,7 @@ const LivreurDashboard = () => {
               commandes: ph.commandes.map((cmd, cIdx) =>
                 cIdx !== cmdIdx
                   ? cmd
-                  : cmd.status === "En cours"
+                  : (cmd.status === "En cours" || cmd.status === "Acceptée")
                     ? { ...cmd, status: "Livrée" }
                     : cmd
               ),
@@ -336,7 +382,7 @@ const LivreurDashboard = () => {
       <aside className="fixed top-0 left-0 h-full w-60 bg-khder text-white flex flex-col items-center z-50 shadow-lg">
         <div className="flex items-center gap-3 mt-8 mb-10 tracking-wide text-xl font-bold">
           <Truck size={28} className="text-white" />
-          <span>{livreurProfile.nom}</span>
+          <span>{livreurProfile.nom} {livreurProfile.prenom}</span>
         </div>
         <nav className="flex flex-col w-full gap-0 mt-4">
           {sidebarItems.map((item) => {

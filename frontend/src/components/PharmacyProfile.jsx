@@ -1,14 +1,19 @@
 import React, { useState } from "react";
 
 const initialProfile = {
-  nom: "Pharmacie El Amine",
+  nomPharmacie: "Pharmacie El Amine",
+  nom: "Amine",
+  prenom: "Bensalah",
   email: "pharmacie.elamine@email.com",
-  dateCreation: "2010-06-20",
   wilaya: "Alger",
   commune: "El Madania",
   telephone: "+213 555 987 654",
   adresse: "12, Rue des Lilas, Alger",
   registre: "Voir le registre de commerce (PDF)",
+  gpsLink: "https://maps.google.com/?q=12,Rue+des+Lilas,Alger",
+  ouverture: "08:00",
+  fermeture: "20:00",
+  livraison: true,
 };
 
 export default function PharmacyProfile() {
@@ -22,7 +27,11 @@ export default function PharmacyProfile() {
   };
 
   const handleChange = (e) => {
-    setEditProfile({ ...editProfile, [e.target.name]: e.target.value });
+    const { name, value, type, checked } = e.target;
+    setEditProfile({
+      ...editProfile,
+      [name]: type === "checkbox" ? checked : value,
+    });
   };
 
   const handleSave = () => {
@@ -36,21 +45,25 @@ export default function PharmacyProfile() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#FAFAF6]">
-      <div className="bg-white rounded-3xl shadow-md p-10 w-full max-w-2xl">
+      <div className="bg-[#FAFAF6] rounded-3xl p-10 w-full max-w-2xl">
         {!editMode ? (
           <>
-            <h2 className="text-2xl font-semibold text-left text-[#466C5A] mb-8">Profil</h2>
+            <h2 className="text-2xl font-semibold text-left text-khder mb-8">
+              Profil
+            </h2>
             <div className="grid grid-cols-2 gap-6">
               <div>
-                <label className="block text-[#466C5A] mb-1">Nom de la pharmacie</label>
+                <label className="block text-khder mb-1">
+                  Nom de la pharmacie
+                </label>
                 <input
                   className="w-full bg-[#F6FAF7] border border-[#D6E5DB] rounded-md px-3 py-2 mb-2"
-                  value={profile.nom}
+                  value={profile.nomPharmacie}
                   disabled
                 />
               </div>
               <div>
-                <label className="block text-[#466C5A] mb-1">Email</label>
+                <label className="block text-khder mb-1">Email</label>
                 <input
                   className="w-full bg-[#F6FAF7] border border-[#D6E5DB] rounded-md px-3 py-2 mb-2"
                   value={profile.email}
@@ -58,15 +71,23 @@ export default function PharmacyProfile() {
                 />
               </div>
               <div>
-                <label className="block text-[#466C5A] mb-1">Date de création</label>
+                <label className="block text-khder mb-1">Nom</label>
                 <input
                   className="w-full bg-[#F6FAF7] border border-[#D6E5DB] rounded-md px-3 py-2 mb-2"
-                  value={profile.dateCreation}
+                  value={profile.nom}
                   disabled
                 />
               </div>
               <div>
-                <label className="block text-[#466C5A] mb-1">Wilaya</label>
+                <label className="block text-khder mb-1">Prénom</label>
+                <input
+                  className="w-full bg-[#F6FAF7] border border-[#D6E5DB] rounded-md px-3 py-2 mb-2"
+                  value={profile.prenom}
+                  disabled
+                />
+              </div>
+              <div>
+                <label className="block text-khder mb-1">Wilaya</label>
                 <input
                   className="w-full bg-[#F6FAF7] border border-[#D6E5DB] rounded-md px-3 py-2 mb-2"
                   value={profile.wilaya}
@@ -74,7 +95,7 @@ export default function PharmacyProfile() {
                 />
               </div>
               <div>
-                <label className="block text-[#466C5A] mb-1">Commune</label>
+                <label className="block text-khder mb-1">Commune</label>
                 <input
                   className="w-full bg-[#F6FAF7] border border-[#D6E5DB] rounded-md px-3 py-2 mb-2"
                   value={profile.commune}
@@ -82,23 +103,60 @@ export default function PharmacyProfile() {
                 />
               </div>
               <div>
-                <label className="block text-[#466C5A] mb-1">Téléphone</label>
+                <label className="block text-khder mb-1">Téléphone</label>
                 <input
                   className="w-full bg-[#F6FAF7] border border-[#D6E5DB] rounded-md px-3 py-2 mb-2"
                   value={profile.telephone}
                   disabled
                 />
               </div>
-              <div className="col-span-2">
-                <label className="block text-[#466C5A] mb-1">Adresse</label>
+              <div>
+                <label className="block text-khder mb-1">Heure d'ouverture</label>
                 <input
                   className="w-full bg-[#F6FAF7] border border-[#D6E5DB] rounded-md px-3 py-2 mb-2"
-                  value={profile.adresse}
+                  value={profile.ouverture}
                   disabled
                 />
               </div>
+              <div>
+                <label className="block text-khder mb-1">Heure de fermeture</label>
+                <input
+                  className="w-full bg-[#F6FAF7] border border-[#D6E5DB] rounded-md px-3 py-2 mb-2"
+                  value={profile.fermeture}
+                  disabled
+                />
+              </div>
+              <div>
+                <label className="block text-khder mb-1">Livraison</label>
+                <input
+                  type="checkbox"
+                  checked={profile.livraison}
+                  disabled
+                  className="mr-2"
+                />
+                <span>{profile.livraison ? "Oui" : "Non"}</span>
+              </div>
               <div className="col-span-2">
-                <label className="block text-[#466C5A] mb-1">Registre de commerce</label>
+                <label className="block text-khder mb-1">Adresse (GPS)</label>
+                {profile.gpsLink ? (
+                  <a
+                    href={profile.gpsLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full inline-block bg-[#F6FAF7] border border-[#D6E5DB] rounded-md px-3 py-2 mb-2 text-khder hover:underline"
+                  >
+                    Voir sur la carte
+                  </a>
+                ) : (
+                  <span className="w-full inline-block bg-[#F6FAF7] border border-[#D6E5DB] rounded-md px-3 py-2 mb-2 text-[#466C5A]">
+                    {profile.adresse}
+                  </span>
+                )}
+              </div>
+              <div className="col-span-2">
+                <label className="block text-khder mb-1">
+                  Registre de commerce
+                </label>
                 <button className="w-full bg-[#F6FAF7] border border-[#D6E5DB] rounded-md px-3 py-2 text-left text-[#466C5A] hover:underline">
                   {profile.registre}
                 </button>
@@ -106,7 +164,7 @@ export default function PharmacyProfile() {
             </div>
             <div className="flex justify-start mt-8">
               <button
-                className="bg-[#FFD600] text-[#23352B] font-bold px-6 py-2 rounded-md"
+                className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold px-6 py-2 rounded-md"
                 onClick={handleEditClick}
               >
                 Modifier informations
@@ -115,7 +173,9 @@ export default function PharmacyProfile() {
           </>
         ) : (
           <>
-            <h2 className="text-2xl font-semibold text-left text-[#466C5A] mb-8">Modifier informations</h2>
+            <h2 className="text-2xl font-semibold text-left text-khder mb-8">
+              Modifier informations
+            </h2>
             <form
               className="grid grid-cols-2 gap-6"
               onSubmit={(e) => {
@@ -123,8 +183,17 @@ export default function PharmacyProfile() {
                 handleSave();
               }}
             >
-              <div className="col-span-2">
-                <label className="block text-[#466C5A] mb-1">Email</label>
+              <div>
+                <label className="block text-khder mb-1">Nom de la pharmacie</label>
+                <input
+                  className="w-full bg-[#F6FAF7] border border-[#D6E5DB] rounded-md px-3 py-2 mb-2 focus:outline-[#466C5A]"
+                  name="nomPharmacie"
+                  value={editProfile.nomPharmacie}
+                  onChange={handleChange}
+                />
+              </div>
+              <div>
+                <label className="block text-khder mb-1">Email</label>
                 <input
                   className="w-full bg-[#F6FAF7] border border-[#D6E5DB] rounded-md px-3 py-2 mb-2 focus:outline-[#466C5A]"
                   name="email"
@@ -133,7 +202,7 @@ export default function PharmacyProfile() {
                 />
               </div>
               <div>
-                <label className="block text-[#466C5A] mb-1">Wilaya</label>
+                <label className="block text-khder mb-1">Wilaya</label>
                 <input
                   className="w-full bg-[#F6FAF7] border border-[#D6E5DB] rounded-md px-3 py-2 mb-2 focus:outline-[#466C5A]"
                   name="wilaya"
@@ -142,7 +211,7 @@ export default function PharmacyProfile() {
                 />
               </div>
               <div>
-                <label className="block text-[#466C5A] mb-1">Commune</label>
+                <label className="block text-khder mb-1">Commune</label>
                 <input
                   className="w-full bg-[#F6FAF7] border border-[#D6E5DB] rounded-md px-3 py-2 mb-2 focus:outline-[#466C5A]"
                   name="commune"
@@ -151,7 +220,7 @@ export default function PharmacyProfile() {
                 />
               </div>
               <div>
-                <label className="block text-[#466C5A] mb-1">Téléphone</label>
+                <label className="block text-khder mb-1">Téléphone</label>
                 <input
                   className="w-full bg-[#F6FAF7] border border-[#D6E5DB] rounded-md px-3 py-2 mb-2 focus:outline-[#466C5A]"
                   name="telephone"
@@ -160,24 +229,57 @@ export default function PharmacyProfile() {
                 />
               </div>
               <div>
-                <label className="block text-[#466C5A] mb-1">Adresse</label>
+                <label className="block text-khder mb-1">Heure d'ouverture</label>
+                <input
+                  type="time"
+                  className="w-full bg-[#F6FAF7] border border-[#D6E5DB] rounded-md px-3 py-2 mb-2 focus:outline-[#466C5A]"
+                  name="ouverture"
+                  value={editProfile.ouverture}
+                  onChange={handleChange}
+                />
+              </div>
+              <div>
+                <label className="block text-khder mb-1">Heure de fermeture</label>
+                <input
+                  type="time"
+                  className="w-full bg-[#F6FAF7] border border-[#D6E5DB] rounded-md px-3 py-2 mb-2 focus:outline-[#466C5A]"
+                  name="fermeture"
+                  value={editProfile.fermeture}
+                  onChange={handleChange}
+                />
+              </div>
+              <div>
+                <label className="block text-khder mb-1">Livraison</label>
+                <input
+                  type="checkbox"
+                  name="livraison"
+                  checked={editProfile.livraison}
+                  onChange={handleChange}
+                  className="mr-2"
+                />
+                <span>{editProfile.livraison ? "Oui" : "Non"}</span>
+              </div>
+              <div>
+                <label className="block text-khder mb-1">Lien GPS</label>
                 <input
                   className="w-full bg-[#F6FAF7] border border-[#D6E5DB] rounded-md px-3 py-2 mb-2 focus:outline-[#466C5A]"
-                  name="adresse"
-                  value={editProfile.adresse}
+                  name="gpsLink"
+                  value={editProfile.gpsLink || ""}
                   onChange={handleChange}
+                  placeholder="https://maps.google.com/..."
+                  type="url"
                 />
               </div>
               <div className="col-span-2 flex justify-start gap-4 mt-6">
                 <button
                   type="submit"
-                  className="bg-[#FFD600] text-[#23352B] font-bold px-8 py-2 rounded-md"
+                  className="bg-[#FFD600] text-black font-bold px-8 py-2 rounded-md"
                 >
                   Enregistrer
                 </button>
                 <button
                   type="button"
-                  className="bg-gray-300 hover:bg-gray-400 text-[#466C5A] font-semibold px-8 py-2 rounded-md"
+                  className="bg-gray-300 hover:bg-gray-400 text-black font-semibold px-8 py-2 rounded-md"
                   onClick={handleCancel}
                 >
                   Annuler

@@ -8,6 +8,7 @@ const samplePatients = [
 		nom: 'Ahmed',
 		prenom: 'Benali',
 		age: 34,
+		date_naissance: '1990-02-15',
 		prescriptions: [
 			{
 				id: 'ORD001',
@@ -23,8 +24,8 @@ const samplePatients = [
 				id: 'ORD002',
 				date: '2024-05-22',
 				medications: [
-					{ nom: 'Ibuprofène 400mg', posologie: '1x/jour', quantite: 8 },
-					{ nom: 'Vitamine C 500mg', posologie: '1x/jour', quantite: 10 }
+					{ nom: 'Ibuprofène 400mg', posologie: '1x/jour', quantite: 2 },
+					{ nom: 'Vitamine C 500mg', posologie: '1x/jour', quantite: 1 }
 				],
 				doctor: 'Dr. Yacine B.',
 				specialite: 'Médecin Généraliste'
@@ -36,6 +37,7 @@ const samplePatients = [
 		nom: 'Sara',
 		prenom: 'Boukhalfa',
 		age: 28,
+		date_naissance: '1996-07-03',
 		prescriptions: []
 	}
 ];
@@ -46,13 +48,16 @@ const DoctorDashboard = () => {
 	const [selectedPrescription, setSelectedPrescription] = useState(null);
 	const [showAddPrescription, setShowAddPrescription] = useState(false);
 	const [patients, setPatients] = useState(samplePatients);
+	const [searchQuery, setSearchQuery] = useState('');
+	const [showAddPatient, setShowAddPatient] = useState(false);
 
 	// Doctor profile (static for demo)
 	const [profile, setProfile] = useState({
-		nom: 'Dr. Yacine B.',
+		nom: 'Yacine',
+		prenom: 'B.',
 		email: 'yacine.b@email.com',
 		date_naissance: '1980-04-15',
-		sexe: 'Homme',
+		sexe: 'Masculin',
 		specialite: 'Médecin Généraliste',
 		wilaya: 'Alger',
 		commune: 'El Madania',
@@ -63,11 +68,14 @@ const DoctorDashboard = () => {
 		agrement: '/assets/doctor-agrement.pdf'
 	});
 	const [editProfile, setEditProfile] = useState({
+		nom: profile.nom,
+		prenom: profile.prenom,
 		email: profile.email,
 		wilaya: profile.wilaya,
 		commune: profile.commune,
 		adresse: profile.adresse,
-		telephone: profile.telephone
+		telephone: profile.telephone,
+		sexe: profile.sexe,
 	});
 	const [showEditCard, setShowEditCard] = useState(false);
 
@@ -75,6 +83,12 @@ const DoctorDashboard = () => {
 	const [newPrescription, setNewPrescription] = useState({
 		date: '',
 		medications: [{ nom: '', posologie: '', quantite: '' }]
+	});
+
+	const [newPatient, setNewPatient] = useState({
+		nom: '',
+		prenom: '',
+		date_naissance: ''
 	});
 
 	// Sidebar
@@ -103,10 +117,19 @@ const DoctorDashboard = () => {
 			<h2 className="text-xl font-bold text-khder mb-6"> Profil</h2>
 			<form className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
 				<div>
-					<label className="block text-khder font-semibold mb-1">Nom complet</label>
+					<label className="block text-khder font-semibold mb-1">Nom</label>
 					<input
 						type="text"
 						value={profile.nom}
+						disabled
+						className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222]"
+					/>
+				</div>
+				<div>
+					<label className="block text-khder font-semibold mb-1">Prénom</label>
+					<input
+						type="text"
+						value={profile.prenom}
 						disabled
 						className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222]"
 					/>
@@ -254,8 +277,6 @@ const DoctorDashboard = () => {
 							</span>
 						</div>
 					</div>
-				</div>
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 					<div>
 						<label className="block text-khder font-semibold mb-1">Wilaya</label>
 						<div className="relative">
@@ -288,8 +309,6 @@ const DoctorDashboard = () => {
 							</span>
 						</div>
 					</div>
-				</div>
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 					<div>
 						<label className="block text-khder font-semibold mb-1">Téléphone</label>
 						<div className="relative">
@@ -306,7 +325,7 @@ const DoctorDashboard = () => {
 							</span>
 						</div>
 					</div>
-					<div>
+					<div className="md:col-span-2">
 						<label className="block text-khder font-semibold mb-1">Adresse</label>
 						<div className="relative">
 							<textarea
@@ -345,50 +364,78 @@ const DoctorDashboard = () => {
 	// Patients list
 	const renderPatients = () => (
 		<div className="bg-[#faf8f3] rounded-2xl shadow-none px-12 py-10 w-full max-w-4xl flex flex-col items-stretch ml-0">
-			<h2 className="text-xl font-bold text-khder mb-6"> Patients</h2>
-			{patients.length === 0 ? (
-				<div className="text-center text-gray-400 py-10">
-					<Users size={64} className="mx-auto mb-2" />
-					<p>Aucun patient trouvé</p>
-				</div>
-			) : (
-				<div className="flex flex-col gap-4">
-					{patients.map((patient) => (
-						<div
-							key={patient.id}
-							className="flex flex-col md:flex-row justify-between items-center bg-smth rounded-lg mb-2 shadow p-5 w-full"
+			<h2 className="text-xl font-bold text-khder mb-6">Mes patients</h2>
+			<input
+				type="text"
+				placeholder="Rechercher un patient par nom ou prénom..."
+				value={searchQuery}
+				onChange={(e) => setSearchQuery(e.target.value)}
+				className="mb-6 px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222] w-full max-w-md"
+			/>
+			<div className="overflow-x-auto">
+				<table className="min-w-full bg-[#faf8f3] rounded-xl shadow font-sans">
+					<thead>
+						<tr>
+							<th className="py-3 px-4 text-khder font-bold text-base border-b-2 border-lsecondary text-left">Nom</th>
+							<th className="py-3 px-4 text-khder font-bold text-base border-b-2 border-lsecondary text-left">Prénom</th>
+							<th className="py-3 px-4 text-khder font-bold text-base border-b-2 border-lsecondary text-left">Date de naissance</th>
+							<th className="py-3 px-4 text-khder font-bold text-base border-b-2 border-lsecondary text-left">Prescriptions</th>
+							<th className="py-3 px-4 text-khder font-bold text-base border-b-2 border-lsecondary text-left">Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						{patients
+							.filter(
+								(patient) =>
+									patient.nom.toLowerCase().includes(searchQuery.toLowerCase()) ||
+									patient.prenom.toLowerCase().includes(searchQuery.toLowerCase()) ||
+									(patient.date_naissance && patient.date_naissance.includes(searchQuery))
+							)
+							.map((patient, idx) => (
+								<tr key={patient.id} className={idx % 2 === 1 ? "bg-smth" : ""}>
+									<td className="py-4 px-4 text-[#222]">{patient.nom}</td>
+									<td className="py-4 px-4 text-[#222]">{patient.prenom}</td>
+									<td className="py-4 px-4 text-[#222]">{patient.date_naissance || "-"}</td>
+									<td className="py-4 px-4">
+										<button
+											className="bg-khder text-white font-semibold rounded-lg px-4 py-2 shadow hover:bg-[#2d3d2a] transition text-sm"
+											onClick={() => setSelectedPatient(patient)}
+										>
+											Voir les prescriptions
+										</button>
+									</td>
+									<td className="py-4 px-4">
+										<button
+											className="bg-yellow-500 text-[#222] font-semibold rounded-lg px-4 py-2 shadow hover:bg-yellow-600 transition text-sm"
+											onClick={() => {
+												setSelectedPatient(patient);
+												setShowAddPrescription(true);
+											}}
+										>
+											Ajouter une ordonnance
+										</button>
+									</td>
+								</tr>
+							))}
+					</tbody>
+				</table>
+				{patients.filter(
+					(patient) =>
+						patient.nom.toLowerCase().includes(searchQuery.toLowerCase()) ||
+						patient.prenom.toLowerCase().includes(searchQuery.toLowerCase())
+				).length === 0 && (
+					<div className="text-center text-gray-400 py-10">
+						<Users size={64} className="mx-auto mb-2" />
+						<p>Aucun patient trouvé</p>
+						<button
+							className="mt-4 bg-yellow-500 text-[#222] font-semibold rounded-lg px-6 py-2 shadow hover:bg-yellow-600 transition"
+							onClick={() => setShowAddPatient(true)}
 						>
-							<div className="mb-4 md:mb-0">
-								<div>
-									<b>Nom:</b> {patient.nom} {patient.prenom}
-								</div>
-								<div>
-									<b>Âge:</b> {patient.age}
-								</div>
-							</div>
-							<div className="flex gap-3 w-full md:w-auto">
-								<button
-									className="bg-khder text-white font-semibold rounded-lg px-4 py-2 shadow hover:bg-[#2d3d2a] transition w-44 text-sm"
-									style={{ minWidth: '120px' }}
-									onClick={() => setSelectedPatient(patient)}
-								>
-									Voir les prescriptions
-								</button>
-								<button
-									className="bg-yellow-500 text-[#222] font-semibold rounded-lg px-4 py-2 shadow hover:bg-yellow-600 transition w-44 text-sm"
-									style={{ minWidth: '120px' }}
-									onClick={() => {
-										setSelectedPatient(patient);
-										setShowAddPrescription(true);
-									}}
-								>
-									Ajouter une ordonnance
-								</button>
-							</div>
-						</div>
-					))}
-				</div>
-			)}
+							Ajouter un patient
+						</button>
+					</div>
+				)}
+			</div>
 		</div>
 	);
 
@@ -643,6 +690,89 @@ const DoctorDashboard = () => {
 		</div>
 	);
 
+	// Add patient form
+	const handleAddPatientChange = (e) => {
+		const { name, value } = e.target;
+		setNewPatient({ ...newPatient, [name]: value });
+	};
+
+	const handleAddPatientSubmit = (e) => {
+		e.preventDefault();
+		setPatients([
+			...patients,
+			{
+				id: patients.length + 1,
+				nom: newPatient.nom,
+				prenom: newPatient.prenom,
+				date_naissance: newPatient.date_naissance,
+				age: '', // Optionally remove this line if not used elsewhere
+				prescriptions: []
+			}
+		]);
+		setShowAddPatient(false);
+		setNewPatient({ nom: '', prenom: '', date_naissance: '' });
+	};
+
+	const renderAddPatientForm = () => (
+		<div className="bg-[#faf8f3] rounded-2xl shadow-none px-12 py-10 w-full max-w-2xl flex flex-col items-stretch ml-0">
+			<h2 className="text-xl font-bold text-khder mb-6">Ajouter un patient</h2>
+			<form className="flex flex-col gap-6" onSubmit={handleAddPatientSubmit}>
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+					<div>
+						<label className="block text-khder font-semibold mb-1">Nom</label>
+						<input
+							type="text"
+							name="nom"
+							value={newPatient.nom}
+							onChange={handleAddPatientChange}
+							required
+							className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222]"
+						/>
+					</div>
+					<div>
+						<label className="block text-khder font-semibold mb-1">Prénom</label>
+						<input
+							type="text"
+							name="prenom"
+							value={newPatient.prenom}
+							onChange={handleAddPatientChange}
+							required
+							className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222]"
+						/>
+					</div>
+				</div>
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+					<div>
+						<label className="block text-khder font-semibold mb-1">Date de naissance</label>
+						<input
+							type="date"
+							name="date_naissance"
+							value={newPatient.date_naissance}
+							onChange={handleAddPatientChange}
+							required
+							className="w-full px-4 py-3 rounded-lg border border-lsecondary bg-smth text-[#222]"
+						/>
+					</div>
+				</div>
+				<div className="flex flex-col md:flex-row gap-4 mt-2">
+					<button
+						className="w-full bg-khder text-white font-semibold rounded-lg py-3 shadow hover:bg-[#2d3d2a] transition"
+						type="submit"
+					>
+						Ajouter
+					</button>
+					<button
+						className="w-full bg-gray-400 text-white font-semibold rounded-lg py-3 shadow hover:bg-gray-500 transition"
+						type="button"
+						onClick={() => setShowAddPatient(false)}
+					>
+						Annuler
+					</button>
+				</div>
+			</form>
+		</div>
+	);
+
 	// Settings (copy from client)
 	const [showPasswordForm, setShowPasswordForm] = useState(false);
 	const [passwordFields, setPasswordFields] = useState({
@@ -741,6 +871,7 @@ const DoctorDashboard = () => {
 		if (showAddPrescription) content = renderAddPrescription();
 		else if (selectedPrescription) content = renderPrescriptionDetails(selectedPrescription);
 		else if (selectedPatient) content = renderPatientPrescriptions(selectedPatient);
+		else if (showAddPatient) content = renderAddPatientForm();
 		else content = renderPatients();
 	} else if (activeSection === 'settings') content = renderSettings();
 
@@ -764,7 +895,7 @@ const DoctorDashboard = () => {
 						<Stethoscope size={28} className="text-white" />
 					</span>
 					<div className="flex flex-col">
-						<span className="leading-tight">{profile.nom}</span>
+						<span className="leading-tight">{profile.nom} {profile.prenom}</span>
 						<span className="text-sm font-normal text-white">{profile.specialite}</span>
 					</div>
 				</div>
