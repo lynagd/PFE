@@ -9,4 +9,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"), // Now you can use '@/components/DoctorPage'
     },
   },
+  server: {
+    historyApiFallback: true,
+  },
 });

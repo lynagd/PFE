@@ -10,7 +10,7 @@ const DoctorPatients = ({
   setShowAddPatient
 }) => (
   <div className="bg-[#faf8f3] rounded-2xl shadow-none px-12 py-10 w-full max-w-4xl flex flex-col items-stretch ml-0">
-    <h2 className="text-xl font-bold text-khder mb-6">Mes patients</h2>
+    <h2 className="text-xl font-bold text-khder mb-6">Patients</h2>
     <input
       type="text"
       placeholder="Rechercher un patient par nom ou prénom..."

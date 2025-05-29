@@ -4,12 +4,12 @@ import Login from "./components/Login.jsx";
 import Register from "./components/Register.jsx";
 import PharmacyProfile from "./components/PharmacyProfile.jsx";
 import NearbyPharmacies from "./components/NearbyPharmacies.jsx";
-import DoctorDashboardPage from "./Pages/DoctorDashboardPage.jsx";
+import DoctorMainPage from "./Pages/DoctorMainPage.jsx";
 import PharmacyLivreurs from "./components/PharmacyLivreurs.jsx";
 import PharmacyCommandes from "./components/PharmacyCommandes.jsx";
 import PharmacyDashboard from "./components/PharmacyDashboard.jsx";
 import ClientDashboardPage from "./Pages/ClientDashboardPage.jsx";
-import LivreurDashboardPage from "./Pages/LivreurDashboardPage.jsx";
+import LivreurMainPage from "./Pages/LivreurMainPage.jsx";
 
 
 function App() {
@@ -64,9 +64,9 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/nearby-pharmacies" element={<NearbyPharmacies />} />
-        <Route path="/doctor" element={<DoctorDashboardPage />} />
+        <Route path="/doctor/*" element={<DoctorMainPage />} />
         <Route path="/client-dashboard" element={<ClientDashboardPage />} />
-        <Route path="/livreur" element={<LivreurDashboardPage />} />
+        <Route path="/livreur/*" element={<LivreurMainPage />} />
         <Route path="/pharmacy-profile" element={<PharmacyProfile />} />
         <Route path="/pharmacy-livreurs" element={<PharmacyLivreurs />} />
         <Route path="/pharmacy-commandes" element={<PharmacyCommandes />} />
@@ -77,14 +77,3 @@ function App() {
 }
 
 export default App;
-
-// import PharmacyDashboard from "./components/PharmacyDashboard.jsx";
-// // ...other imports...
-
-// function App() {
-//   return (
-//     <PharmacyDashboard />
-//   );
-// }
-
-// export default App;
