@@ -51,7 +51,7 @@ const ClientCommandes = ({
           </span>
         </div>
       </div>
-      <h3 className="mt-6 mb-3 font-semibold">Médicaments commandés</h3>
+      <h3 className="mt-6 mb-3 font-semibold">Produits commandés</h3>
       <div>
         {(order.items || []).length === 0 ? (
           <div>Aucun médicament dans cette commande.</div>

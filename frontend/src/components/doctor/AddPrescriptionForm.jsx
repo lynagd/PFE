@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 
-const AddPrescriptionForm = ({ selectedPatient, setPatients, setShowAddPrescription }) => {
+const AddPrescriptionForm = ({
+  selectedPatient,
+  setPatients,
+  setShowAddPrescription,
+  setSelectedPatient,
+  doctorProfile
+}) => {
   const today = new Date().toISOString().slice(0, 10);
 
   const [medicaments, setMedicaments] = useState([
@@ -12,6 +18,10 @@ const AddPrescriptionForm = ({ selectedPatient, setPatients, setShowAddPrescript
     setMedicaments([...medicaments, { nom: "", dosage: "", forme: "", quantite: "", instruction: "" }]);
   };
 
+  const handleRemoveMedicament = (idx) => {
+    setMedicaments(medicaments.filter((_, i) => i !== idx));
+  };
+
   const handleMedicamentChange = (idx, field, value) => {
     const updated = medicaments.map((med, i) =>
       i === idx ? { ...med, [field]: value } : med
@@ -21,6 +31,10 @@ const AddPrescriptionForm = ({ selectedPatient, setPatients, setShowAddPrescript
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!selectedPatient || !selectedPatient.id) {
+      alert("Aucun patient sélectionné !");
+      return;
+    }
     const newPrescription = {
       id: "ORD" + Math.floor(Math.random() * 100000),
       doctor: {
@@ -38,17 +52,21 @@ const AddPrescriptionForm = ({ selectedPatient, setPatients, setShowAddPrescript
       codebarre: Math.floor(100000 + Math.random() * 900000).toString(),
       produits_prescrits: medicaments.filter(med => med.nom.trim() !== ""),
       instruction_supplementaire: instructions,
-      signatureUrl: "/assets/doctor-signature.png",
-      cachetUrl: "/assets/doctor-cachet.png"
+      signatureUrl: doctorProfile.signature || "/assets/doctor-signature.png",
+      cachetUrl: doctorProfile.cachet || "/assets/doctor-cachet.png"
     };
 
-    setPatients((prev) =>
-      prev.map((p) =>
+    setPatients((prev) => {
+      const updated = prev.map((p) =>
         p.id === selectedPatient.id
-          ? { ...p, prescriptions: [...p.prescriptions, newPrescription] }
+          ? { ...p, prescriptions: [...(p.prescriptions || []), newPrescription] }
           : p
-      )
-    );
+      );
+      // Update selectedPatient to the new version with the new prescription
+      const updatedPatient = updated.find(p => p.id === selectedPatient.id);
+      setSelectedPatient && setSelectedPatient(updatedPatient);
+      return updated;
+    });
     setShowAddPrescription(false);
   };
 
@@ -66,17 +84,47 @@ const AddPrescriptionForm = ({ selectedPatient, setPatients, setShowAddPrescript
           <div className="mb-6">
             <label className="block font-semibold text-[#3d5a40] mb-2">Médicaments</label>
             {medicaments.map((med, idx) => (
-              <div className="flex flex-wrap gap-2 mb-2 min-w-0" key={idx}>
+              <div className="flex flex-wrap gap-2 mb-2 min-w-0 items-center" key={idx}>
                 <input className="flex-1 min-w-[120px] px-3 py-2 rounded border" placeholder="Nom"
                   value={med.nom} onChange={e => handleMedicamentChange(idx, "nom", e.target.value)} />
                 <input className="flex-1 min-w-[100px] px-3 py-2 rounded border" placeholder="Dosage"
                   value={med.dosage} onChange={e => handleMedicamentChange(idx, "dosage", e.target.value)} />
-                <input className="flex-1 min-w-[100px] px-3 py-2 rounded border" placeholder="Forme"
-                  value={med.forme} onChange={e => handleMedicamentChange(idx, "forme", e.target.value)} />
-                <input className="flex-1 min-w-[100px] px-3 py-2 rounded border" placeholder="Quantité"
-                  value={med.quantite} onChange={e => handleMedicamentChange(idx, "quantite", e.target.value)} />
+                <select
+                  className="flex-1 min-w-[100px] px-3 py-2 rounded border"
+                  value={med.forme}
+                  onChange={e => handleMedicamentChange(idx, "forme", e.target.value)}
+                >
+                  <option value="">Forme</option>
+                  <option value="Comprimé">Comprimé</option>
+                  <option value="Gélule">Gélule</option>
+                  <option value="Sirop">Sirop</option>
+                  <option value="Pommade">Pommade</option>
+                  <option value="Crème">Crème</option>
+                  <option value="Solution">Solution</option>
+                  <option value="Injectable">Injectable</option>
+                  <option value="Suppositoire">Suppositoire</option>
+                  <option value="Spray">Spray</option>
+                  <option value="Autre">Autre</option>
+                </select>
+                <input
+                  type="number"
+                  min="1"
+                  className="flex-1 min-w-[100px] px-3 py-2 rounded border"
+                  placeholder="Quantité"
+                  value={med.quantite}
+                  onChange={e => handleMedicamentChange(idx, "quantite", e.target.value)}
+                />
                 <input className="flex-1 min-w-[120px] px-3 py-2 rounded border" placeholder="Instruction"
                   value={med.instruction} onChange={e => handleMedicamentChange(idx, "instruction", e.target.value)} />
+                {medicaments.length > 1 && (
+                  <button
+                    type="button"
+                    className="bg-red-500 text-white rounded px-3 py-2 ml-2 hover:bg-red-600"
+                    onClick={() => handleRemoveMedicament(idx)}
+                  >
+                    Supprimer
+                  </button>
+                )}
               </div>
             ))}
             <button

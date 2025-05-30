@@ -8,6 +8,21 @@ const DoctorProfile = ({ profile, setProfile }) => {
     setEditProfile({ ...editProfile, [e.target.name]: e.target.value });
   };
 
+  // Handle file upload for cachet and signature
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    if (files && files[0]) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        setEditProfile((prev) => ({
+          ...prev,
+          [name]: ev.target.result,
+        }));
+      };
+      reader.readAsDataURL(files[0]);
+    }
+  };
+
   const handleSaveChanges = (e) => {
     e.preventDefault();
     setProfile(editProfile);
@@ -15,7 +30,7 @@ const DoctorProfile = ({ profile, setProfile }) => {
   };
 
   if (showEdit) {
-    // Allow editing email, commune, wilaya, telephone, adresse
+    // Remove cachet and signature from the edit form
     return (
       <div className="bg-[#faf8f3] rounded-2xl shadow-none px-12 py-10 w-full max-w-4xl flex flex-col items-stretch ml-0">
         <h2 className="text-xl font-bold text-khder mb-6">Modifier informations</h2>
@@ -133,13 +148,13 @@ const DoctorProfile = ({ profile, setProfile }) => {
         <div>
           <label className="block font-bold text-[#3d5a40] mb-1">Cachet</label>
           <div className="bg-[#fcfefd] rounded-lg px-5 py-3 flex items-center min-h-[80px]">
-            <img src={profile.cachet} alt="Cachet" className="h-12 mr-2" />
+            <img src={profile.cachet || "/assets/doctor-cachet.png"} alt="Cachet" className="h-12 mr-2" />
           </div>
         </div>
         <div>
           <label className="block font-bold text-[#3d5a40] mb-1">Signature</label>
           <div className="bg-[#fcfefd] rounded-lg px-5 py-3 flex items-center min-h-[80px]">
-            <img src={profile.signature} alt="Signature" className="h-12 mr-2" />
+            <img src={profile.signature || "/assets/doctor-signature.png"} alt="Signature" className="h-12 mr-2" />
           </div>
         </div>
         <div className="md:col-span-2">

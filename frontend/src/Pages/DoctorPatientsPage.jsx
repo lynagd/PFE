@@ -95,12 +95,31 @@ const samplePatients = [
   }
 ];
 
+const doctorProfile = {
+  nom: "Yacine",
+  prenom: "B.",
+  specialite: "Médecin Généraliste",
+  wilaya: "Alger",
+  telephone: "+213 555 987 654",
+  signature: "/assets/doctor-signature.png",
+  cachet: "/assets/doctor-cachet.png"
+};
+
 const DoctorPatientsPage = () => {
-  const [patients, setPatients] = useState(samplePatients);
+  // Load from localStorage or use default
+  const [patients, setPatients] = useState(() => {
+    const saved = localStorage.getItem("patients");
+    return saved ? JSON.parse(saved) : samplePatients;
+  });
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [showAddPrescription, setShowAddPrescription] = useState(false);
   const [selectedPrescription, setSelectedPrescription] = useState(null);
+
+  // Save to localStorage whenever patients change
+  useEffect(() => {
+    localStorage.setItem("patients", JSON.stringify(patients));
+  }, [patients]);
 
   // Render ordonnance details
   const renderPrescriptionDetails = (presc) => {
@@ -245,7 +264,7 @@ const DoctorPatientsPage = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-lfond">
-      <DoctorHeader profile={{ nom: "Yacine", prenom: "B.", specialite: "Médecin Généraliste" }} />
+      <DoctorHeader profile={doctorProfile} />
       <main className="flex-1 p-8">
         {selectedPrescription
           ? <PrescriptionDetails presc={selectedPrescription} onBack={() => setSelectedPrescription(null)} />
@@ -254,6 +273,8 @@ const DoctorPatientsPage = () => {
                 selectedPatient={selectedPatient}
                 setPatients={setPatients}
                 setShowAddPrescription={setShowAddPrescription}
+                setSelectedPatient={setSelectedPatient}
+                doctorProfile={doctorProfile}
               />
             : selectedPatient
               ? renderPatientPrescriptions(selectedPatient)

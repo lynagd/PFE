@@ -67,7 +67,7 @@ const PrescriptionDetails = ({ presc, onBack }) => {
                 <div className="text-center">
                   Signature:<br />
                   <img
-                    src={presc.signatureUrl || "/assets/doctor-signature.png"}
+                    src={presc.signatureUrl || presc.doctor?.signature || "/assets/doctor-signature.png"}
                     alt="Signature"
                     className="h-12 mt-1 bg-transparent inline-block"
                   />
@@ -75,7 +75,7 @@ const PrescriptionDetails = ({ presc, onBack }) => {
                 <div className="text-center">
                   Cachet:<br />
                   <img
-                    src={presc.cachetUrl || "/assets/doctor-cachet.png"}
+                    src={presc.cachetUrl || presc.doctor?.cachet || "/assets/doctor-cachet.png"}
                     alt="Cachet"
                     className="h-12 mt-1 bg-transparent inline-block"
                   />

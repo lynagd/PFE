@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DoctorHeader from "../components/doctor/DoctorHeader";
 import DoctorProfile from "../components/doctor/DoctorProfile";
 
-// Sample profile
-const sampleProfile = {
+// Default profile (as before)
+const defaultProfile = {
   nom: "Yacine",
   prenom: "B.",
   email: "yacine.b@email.com",
@@ -20,7 +20,16 @@ const sampleProfile = {
 };
 
 const DoctorProfilePage = () => {
-  const [profile, setProfile] = useState(sampleProfile);
+  // Load from localStorage or use default
+  const [profile, setProfile] = useState(() => {
+    const saved = localStorage.getItem("doctorProfile");
+    return saved ? JSON.parse(saved) : defaultProfile;
+  });
+
+  // Save to localStorage whenever profile changes
+  useEffect(() => {
+    localStorage.setItem("doctorProfile", JSON.stringify(profile));
+  }, [profile]);
 
   return (
     <div className="min-h-screen bg-lfond">
