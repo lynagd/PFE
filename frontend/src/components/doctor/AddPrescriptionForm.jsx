@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 const AddPrescriptionForm = ({
   selectedPatient,
-  setPatients,
+  onAddPrescription,
   setShowAddPrescription,
   setSelectedPatient,
   doctorProfile
@@ -36,12 +36,11 @@ const AddPrescriptionForm = ({
       return;
     }
     const newPrescription = {
-      id: "ORD" + Math.floor(Math.random() * 100000),
       doctor: {
-        nom: "Dr. Yacine B.",
-        specialite: "Médecin Généraliste",
-        wilaya: "Alger",
-        telephone: "+213 555 987 654"
+        nom: doctorProfile.nom,
+        specialite: doctorProfile.specialite,
+        wilaya: doctorProfile.wilaya,
+        telephone: doctorProfile.telephone
       },
       patient: {
         nom: selectedPatient.nom,
@@ -49,25 +48,14 @@ const AddPrescriptionForm = ({
         age: selectedPatient.age
       },
       date_prescription: today,
-      codebarre: Math.floor(100000 + Math.random() * 900000).toString(),
       produits_prescrits: medicaments.filter(med => med.nom.trim() !== ""),
       instruction_supplementaire: instructions,
       signatureUrl: doctorProfile.signature || "/assets/doctor-signature.png",
       cachetUrl: doctorProfile.cachet || "/assets/doctor-cachet.png"
     };
 
-    setPatients((prev) => {
-      const updated = prev.map((p) =>
-        p.id === selectedPatient.id
-          ? { ...p, prescriptions: [...(p.prescriptions || []), newPrescription] }
-          : p
-      );
-      // Update selectedPatient to the new version with the new prescription
-      const updatedPatient = updated.find(p => p.id === selectedPatient.id);
-      setSelectedPatient && setSelectedPatient(updatedPatient);
-      return updated;
-    });
-    setShowAddPrescription(false);
+    // Call the parent handler to POST to backend
+    onAddPrescription(selectedPatient.id, newPrescription);
   };
 
   return (

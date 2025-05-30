@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import DoctorHeader from "../components/doctor/DoctorHeader";
 import DoctorParametres from "../components/doctor/DoctorParametres";
 
@@ -16,8 +17,20 @@ const DoctorParametresPage = () => {
 
   const handlePasswordSubmit = (e) => {
     e.preventDefault();
-    setShowPasswordForm(false);
-    setPasswordFields({ current: "", new: "", confirm: "" });
+    if (passwordFields.new !== passwordFields.confirm) {
+      alert("Les mots de passe ne correspondent pas.");
+      return;
+    }
+    axios.post("/api/doctor/change-password/", {
+      current_password: passwordFields.current,
+      new_password: passwordFields.new
+    })
+      .then(() => {
+        alert("Mot de passe changé avec succès !");
+        setShowPasswordForm(false);
+        setPasswordFields({ current: "", new: "", confirm: "" });
+      })
+      .catch(() => alert("Erreur lors du changement de mot de passe."));
   };
 
   return (
