@@ -4,6 +4,7 @@ import DoctorHeader from "../components/doctor/DoctorHeader";
 import DoctorPatients from "../components/doctor/DoctorPatients";
 import PrescriptionDetails from "../components/doctor/PrescriptionDetails";
 import AddPrescriptionForm from "../components/doctor/AddPrescriptionForm";
+import AddPatientForm from "../components/doctor/AddPatientForm";
 
 const doctorProfile = {
   nom: "Yacine",
@@ -20,6 +21,7 @@ const DoctorPatientsPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [showAddPrescription, setShowAddPrescription] = useState(false);
+  const [showAddPatient, setShowAddPatient] = useState(false);
   const [selectedPrescription, setSelectedPrescription] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -65,6 +67,16 @@ const DoctorPatientsPage = () => {
         setShowAddPrescription(false);
       })
       .catch(err => alert("Erreur lors de l'ajout de l'ordonnance"));
+  };
+
+  // Add patient via API
+  const handleAddPatient = (patientData) => {
+    axios.post("/api/patients/", patientData)
+      .then(res => {
+        setPatients(prev => [...prev, res.data]);
+        setShowAddPatient(false);
+      })
+      .catch(() => alert("Erreur lors de l'ajout du patient"));
   };
 
   // Render ordonnance list for selected patient
@@ -127,18 +139,23 @@ const DoctorPatientsPage = () => {
                   setSelectedPatient={setSelectedPatient}
                   doctorProfile={doctorProfile}
                 />
-              : selectedPatient
-                ? renderPatientPrescriptions(selectedPatient)
-                : (
-                  <DoctorPatients
-                    patients={Array.isArray(patients) ? patients : []}
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    setSelectedPatient={setSelectedPatient}
-                    setShowAddPrescription={setShowAddPrescription}
-                    setShowAddPatient={() => {}} // implement as needed
+              : showAddPatient
+                ? <AddPatientForm
+                    onSave={handleAddPatient}
+                    onCancel={() => setShowAddPatient(false)}
                   />
-                )
+                : selectedPatient
+                  ? renderPatientPrescriptions(selectedPatient)
+                  : (
+                    <DoctorPatients
+                      patients={Array.isArray(patients) ? patients : []}
+                      searchQuery={searchQuery}
+                      setSearchQuery={setSearchQuery}
+                      setSelectedPatient={setSelectedPatient}
+                      setShowAddPrescription={setShowAddPrescription}
+                      setShowAddPatient={setShowAddPatient}
+                    />
+                  )
         )}
       </main>
     </div>
