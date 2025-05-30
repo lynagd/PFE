@@ -9,7 +9,7 @@ import PharmacyLivreurs from "./components/PharmacyLivreurs.jsx";
 import PharmacyCommandes from "./components/PharmacyCommandes.jsx";
 import PharmacyDashboard from "./components/PharmacyDashboard.jsx";
 import ClientDashboardPage from "./Pages/ClientDashboardPage.jsx";
-import LivreurMainPage from "./Pages/LivreurMainPage.jsx";
+import LivreurMainPage from "./Pages/LivreurMainPage";
 
 
 function App() {

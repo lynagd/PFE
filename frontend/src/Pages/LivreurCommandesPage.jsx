@@ -1,67 +1,27 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import LivreurHeader from "../components/livreur/LivreurHeader";
 import LivreurCommandes from "../components/livreur/LivreurCommandes";
-
-const livreurProfile = {
-  id: "LIV001",
-  nom: "Ali",
-  prenom: "Benali",
-};
-
-const commandesData = [
-  {
-    pharmacyName: "Pharmacie Central",
-    pharmacyAddress: "12, Rue des Lilas, Alger",
-    commandes: [
-      {
-        id: "CMD001",
-        client: "Ahmed Benali",
-        telephone: "+213 555 111 222",
-        adresse: "123 Rue des Martyrs, Bab Ezzouar, Alger",
-        date: "2024-05-22",
-        status: "En cours",
-        total: "850 DA",
-        livreurId: "LIV001",
-      },
-      {
-        id: "CMD002",
-        client: "Sara Bouzid",
-        telephone: "+213 555 333 444",
-        adresse: "45 Rue Didouche Mourad, Alger",
-        date: "2024-05-21",
-        status: "Livrée",
-        total: "320 DA",
-        livreurId: "LIV002",
-      },
-    ],
-  },
-  {
-    pharmacyName: "Pharmacie du Centre",
-    pharmacyAddress: "5, Avenue Pasteur, Alger",
-    commandes: [
-      {
-        id: "CMD003",
-        client: "Yacine Amrani",
-        telephone: "+213 555 555 666",
-        adresse: "67 Rue Hassiba Ben Bouali, Alger",
-        date: "2024-05-20",
-        status: "Non livrée",
-        total: "410 DA",
-        livreurId: "LIV001",
-      },
-    ],
-  },
-];
+import axios from "axios";
 
 const LivreurCommandesPage = () => {
-  const [commandes, setCommandes] = useState(commandesData);
+  const [profile, setProfile] = useState({});
+  const [commandes, setCommandes] = useState([]);
+  const [disponible, setDisponible] = useState(true); // <-- Add this line
 
-  const myCommandes = commandes
+  useEffect(() => {
+    axios.get("/api/livreur/profile/")
+      .then(res => setProfile(res.data));
+    axios.get("/api/livreur/commandes/")
+      .then(res => setCommandes(Array.isArray(res.data) ? res.data : []));
+  }, []);
+
+  // Filter commandes for this livreur
+  const myCommandes = (Array.isArray(commandes) ? commandes : [])
     .map((pharmacy) => ({
       ...pharmacy,
-      commandes: pharmacy.commandes.filter(
-        (cmd) => cmd.livreurId === livreurProfile.id
-      ),
+      commandes: Array.isArray(pharmacy.commandes)
+        ? pharmacy.commandes.filter((cmd) => cmd.livreurId === profile.id)
+        : [],
     }))
     .filter((pharmacy) => pharmacy.commandes.length > 0);
 
@@ -86,9 +46,14 @@ const LivreurCommandesPage = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-lfond">
-      <LivreurHeader profile={livreurProfile} />
+      <LivreurHeader profile={profile} />
       <main className="flex-1 flex flex-col items-center py-10 px-6 bg-lfond min-h-screen">
-        <LivreurCommandes myCommandes={myCommandes} handleStatusClick={handleStatusClick} />
+        <LivreurCommandes
+          myCommandes={myCommandes}
+          handleStatusClick={handleStatusClick}
+          disponible={disponible}           // <-- Pass as prop
+          setDisponible={setDisponible}     // <-- Pass as prop
+        />
       </main>
     </div>
   );

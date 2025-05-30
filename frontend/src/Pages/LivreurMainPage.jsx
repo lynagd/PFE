@@ -11,7 +11,7 @@ const LivreurMainPage = () => (
     <Route path="pharmacies" element={<LivreurPharmaciesPage />} />
     <Route path="commandes" element={<LivreurCommandesPage />} />
     <Route path="parametres" element={<LivreurParametresPage />} />
-    <Route path="" element={<Navigate to="profile" />} /> {/* Default redirect */}
+    <Route path="" element={<Navigate to="commandes" />} /> {/* Default redirect */}
   </Routes>
 );
 
