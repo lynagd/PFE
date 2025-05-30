@@ -25,7 +25,7 @@ const LivreurCommandesPage = () => {
     }))
     .filter((pharmacy) => pharmacy.commandes.length > 0);
 
-  const handleStatusClick = (pharmacyIdx, cmdIdx) => {
+  const handleStatusClick = (pharmacyIdx, cmdIdx, newStatus) => {
     setCommandes((prev) =>
       prev.map((ph, pIdx) =>
         pIdx !== pharmacyIdx
@@ -35,9 +35,7 @@ const LivreurCommandesPage = () => {
               commandes: ph.commandes.map((cmd, cIdx) =>
                 cIdx !== cmdIdx
                   ? cmd
-                  : (cmd.status === "En cours" || cmd.status === "Acceptée")
-                  ? { ...cmd, status: "Livrée" }
-                  : cmd
+                  : { ...cmd, status: newStatus }
               ),
             }
       )

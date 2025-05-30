@@ -1,13 +1,20 @@
 import React from "react";
 
 const statusColor = (status) => {
-  if (status === "En cours" || status === "Acceptée")
-    return "bg-[#fff7d6] text-[#8d7b2a] font-bold rounded-xl px-6 py-3 text-base shadow-none border-none flex items-center justify-center";
-  if (status === "Livrée")
-    return "bg-[#dbeaf3] text-[#3d8abf] font-bold rounded-xl px-6 py-3 text-base shadow-none border-none flex items-center justify-center";
-  if (status === "Non livrée" || status === "En attente")
-    return "bg-[#f4f4f4] text-[#444] font-bold rounded-xl px-6 py-3 text-base shadow-none border-none flex items-center justify-center";
-  return "bg-gray-300 text-[#222] font-bold rounded-xl px-6 py-3 text-base shadow-none border-none flex items-center justify-center";
+  if (status === "Traitee")
+    return "bg-yellow-100 text-yellow-700 border border-yellow-300 font-bold rounded-xl px-6 py-3 text-base flex items-center justify-center cursor-pointer";
+  if (status === "En livraison")
+    return "bg-blue-100 text-blue-700 border border-blue-300 font-bold rounded-xl px-6 py-3 text-base flex items-center justify-center cursor-pointer";
+  if (status === "Livree")
+    return "bg-emerald-100 text-emerald-700 border border-emerald-300 font-bold rounded-xl px-6 py-3 text-base flex items-center justify-center";
+  return "bg-gray-200 text-gray-700 font-bold rounded-xl px-6 py-3 text-base flex items-center justify-center";
+};
+
+// Helper to get next status
+const nextStatus = (status) => {
+  if (status === "Traitee") return "En livraison";
+  if (status === "En livraison") return "Livree";
+  return status;
 };
 
 const LivreurCommandes = ({
@@ -31,32 +38,12 @@ const LivreurCommandes = ({
       >
         {disponible ? (
           <>
-            <svg
-              width="20"
-              height="20"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <path d="M9 12l2 2 4-4" />
-            </svg>
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
             Disponible
           </>
         ) : (
           <>
-            <svg
-              width="20"
-              height="20"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <path d="M15 9l-6 6M9 9l6 6" />
-            </svg>
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
             Non disponible
           </>
         )}
@@ -116,34 +103,34 @@ const LivreurCommandes = ({
             </div>
           </div>
           <div>
-            {pharmacy.commandes.length === 0 ? (
-              <table className="min-w-full border-separate border-spacing-0 font-sans">
-                <thead>
-                  <tr>
-                    <th className="py-3 px-4 text-khder font-bold text-lg border-b-2 border-gray-200 bg-lfond text-left font-sans">
-                      Commande
-                    </th>
-                    <th className="py-3 px-4 text-khder font-bold text-lg border-b-2 border-gray-200 bg-lfond text-left font-sans">
-                      Client
-                    </th>
-                    <th className="py-3 px-4 text-khder font-bold text-lg border-b-2 border-gray-200 bg-lfond text-left font-sans">
-                      Téléphone
-                    </th>
-                    <th className="py-3 px-4 text-khder font-bold text-lg border-b-2 border-gray-200 bg-lfond text-left font-sans">
-                      Adresse
-                    </th>
-                    <th className="py-3 px-4 text-khder font-bold text-lg border-b-2 border-gray-200 bg-lfond text-left font-sans">
-                      Date
-                    </th>
-                    <th className="py-3 px-4 text-khder font-bold text-lg border-b-2 border-gray-200 bg-lfond text-left font-sans">
-                      Total
-                    </th>
-                    <th className="py-3 px-4 text-khder font-bold text-lg border-b-2 border-gray-200 bg-lfond text-left font-sans">
-                      Statut
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
+            <table className="min-w-full border-separate border-spacing-0 font-sans">
+              <thead>
+                <tr>
+                  <th className="py-3 px-4 text-khder font-bold text-lg border-b-2 border-gray-200 bg-lfond text-left font-sans">
+                    Commande
+                  </th>
+                  <th className="py-3 px-4 text-khder font-bold text-lg border-b-2 border-gray-200 bg-lfond text-left font-sans">
+                    Client
+                  </th>
+                  <th className="py-3 px-4 text-khder font-bold text-lg border-b-2 border-gray-200 bg-lfond text-left font-sans">
+                    Téléphone
+                  </th>
+                  <th className="py-3 px-4 text-khder font-bold text-lg border-b-2 border-gray-200 bg-lfond text-left font-sans">
+                    Adresse
+                  </th>
+                  <th className="py-3 px-4 text-khder font-bold text-lg border-b-2 border-gray-200 bg-lfond text-left font-sans">
+                    Date
+                  </th>
+                  <th className="py-3 px-4 text-khder font-bold text-lg border-b-2 border-gray-200 bg-lfond text-left font-sans">
+                    Total
+                  </th>
+                  <th className="py-3 px-4 text-khder font-bold text-lg border-b-2 border-gray-200 bg-lfond text-left font-sans">
+                    Statut
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {pharmacy.commandes.length === 0 ? (
                   <tr>
                     <td colSpan={7}>
                       <div className="text-gray-400 italic py-6 text-lg text-center">
@@ -151,102 +138,61 @@ const LivreurCommandes = ({
                       </div>
                     </td>
                   </tr>
-                </tbody>
-              </table>
-            ) : (
-              <div>
-                <table className="min-w-full border-separate border-spacing-0 font-sans">
-                  <thead>
-                    <tr>
-                      <th className="py-3 px-4 text-khder font-bold text-lg border-b-2 border-gray-200 bg-lfond text-left font-sans">
-                        Commande
-                      </th>
-                      <th className="py-3 px-4 text-khder font-bold text-lg border-b-2 border-gray-200 bg-lfond text-left font-sans">
-                        Client
-                      </th>
-                      <th className="py-3 px-4 text-khder font-bold text-lg border-b-2 border-gray-200 bg-lfond text-left font-sans">
-                        Téléphone
-                      </th>
-                      <th className="py-3 px-4 text-khder font-bold text-lg border-b-2 border-gray-200 bg-lfond text-left font-sans">
-                        Adresse
-                      </th>
-                      <th className="py-3 px-4 text-khder font-bold text-lg border-b-2 border-gray-200 bg-lfond text-left font-sans">
-                        Date
-                      </th>
-                      <th className="py-3 px-4 text-khder font-bold text-lg border-b-2 border-gray-200 bg-lfond text-left font-sans">
-                        Total
-                      </th>
-                      <th className="py-3 px-4 text-khder font-bold text-lg border-b-2 border-gray-200 bg-lfond text-left font-sans">
-                        Statut
-                      </th>
+                ) : (
+                  pharmacy.commandes.map((cmd, i) => (
+                    <tr
+                      key={cmd.id}
+                      className={i % 2 === 1 ? "bg-smth" : ""}
+                    >
+                      <td className="py-6 px-4 text-[#222] align-top font-sans">
+                        {cmd.id}
+                      </td>
+                      <td className="py-6 px-4 text-[#222] align-top whitespace-pre-line font-sans">
+                        {cmd.client}
+                      </td>
+                      <td className="py-6 px-4 text-[#222] align-top font-sans">
+                        {cmd.telephone}
+                      </td>
+                      <td className="py-6 px-4 text-[#222] align-top whitespace-pre-line font-sans">
+                        {cmd.adresse}
+                      </td>
+                      <td className="py-6 px-4 text-[#222] align-top font-sans">
+                        {cmd.date}
+                      </td>
+                      <td className="py-6 px-4 text-[#222] align-top font-sans">
+                        {cmd.total}
+                      </td>
+                      <td className="py-4 px-4 align-top font-sans">
+                        <span
+                          className={statusColor(cmd.status)}
+                          style={{
+                            minWidth: "110px",
+                            minHeight: "56px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            boxShadow: "none",
+                            border: "none",
+                          }}
+                          title={
+                            cmd.status === "Livree"
+                              ? "Livrée"
+                              : "Cliquer pour changer le statut"
+                          }
+                          onClick={() => {
+                            if (cmd.status !== "Livree") {
+                              handleStatusClick(idx, i, nextStatus(cmd.status));
+                            }
+                          }}
+                        >
+                          {cmd.status}
+                        </span>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {pharmacy.commandes.map((cmd, i) => (
-                      <tr
-                        key={cmd.id}
-                        className={i % 2 === 1 ? "bg-smth" : ""}
-                      >
-                        <td className="py-6 px-4 text-[#222] align-top font-sans">
-                          {cmd.id}
-                        </td>
-                        <td className="py-6 px-4 text-[#222] align-top whitespace-pre-line font-sans">
-                          {cmd.client}
-                        </td>
-                        <td className="py-6 px-4 text-[#222] align-top font-sans">
-                          {cmd.telephone}
-                        </td>
-                        <td className="py-6 px-4 text-[#222] align-top whitespace-pre-line font-sans">
-                          {cmd.adresse}
-                        </td>
-                        <td className="py-6 px-4 text-[#222] align-top font-sans">
-                          {cmd.date}
-                        </td>
-                        <td className="py-6 px-4 text-[#222] align-top font-sans">
-                          {cmd.total}
-                        </td>
-                        <td className="py-4 px-4 align-top font-sans">
-                          {cmd.status === "En cours" || cmd.status === "Acceptée" ? (
-                            <span
-                              className={statusColor("Acceptée")}
-                              style={{
-                                minWidth: "110px",
-                                minHeight: "56px",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                boxShadow: "none",
-                                border: "none",
-                                cursor: "pointer",
-                              }}
-                              title="Cliquer pour marquer comme Livrée"
-                              onClick={() => handleStatusClick(idx, i)}
-                            >
-                              Acceptée
-                            </span>
-                          ) : (
-                            <span
-                              className={statusColor(cmd.status)}
-                              style={{
-                                minWidth: "110px",
-                                minHeight: "56px",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                boxShadow: "none",
-                                border: "none",
-                              }}
-                            >
-                              {cmd.status === "Livrée" ? "Livrée" : cmd.status}
-                            </span>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
       ))

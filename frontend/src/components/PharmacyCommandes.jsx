@@ -12,7 +12,7 @@ const sampleCommandes = [
     },
     date: "2024-05-18",
     total: 850,
-    etat: "non livré", // <-- add initial state
+    statut: "en_attente",
     ordonnance: [
       { nom: "Amoxicilline 500mg", quantite: 2 },
       { nom: "Doliprane 1000mg", quantite: 1 },
@@ -27,7 +27,7 @@ const sampleCommandes = [
     },
     date: "2024-05-19",
     total: 320,
-    etat: "non livré", // <-- add initial state
+    statut: "en_attente",
     ordonnance: [
       { nom: "Ibuprofène 400mg", quantite: 2 },
     ],
@@ -48,22 +48,56 @@ const disponibiliteColor = (dispo) => {
   return "bg-gray-200 text-gray-700 font-bold rounded-xl px-6 py-3 text-base flex items-center justify-center";
 };
 
-const etatColor = (etat) => {
-  if (etat === "non livré")
-    return "bg-[#f4f4f4] text-[#444] font-bold rounded-lg px-6 py-1"; // greyish
-  if (etat === "en cours")
-    return "bg-[#fff7d6] text-[#b89c33] font-bold rounded-lg px-6 py-1"; // slightly yellowish
-  if (etat === "livrée")
-    return "bg-[#d7f5df] text-[#3d5a40] font-bold rounded-lg px-6 py-1"; // greenish
-  return "";
+// Backend-aligned statut color
+const statutColor = (statut) => {
+  switch (statut) {
+    case "en_attente":
+      return "bg-gray-100 text-gray-700 font-bold rounded-lg px-6 py-1 cursor-pointer";
+    case "traitee":
+      return "bg-yellow-100 text-yellow-700 font-bold rounded-lg px-6 py-1 cursor-pointer";
+    case "en_livraison":
+      return "bg-blue-100 text-blue-700 font-bold rounded-lg px-6 py-1 cursor-pointer";
+    case "livree":
+      return "bg-emerald-100 text-emerald-700 font-bold rounded-lg px-6 py-1";
+    case "refusee":
+      return "bg-red-100 text-red-700 font-bold rounded-lg px-6 py-1";
+    default:
+      return "bg-gray-200 text-gray-700 font-bold rounded-lg px-6 py-1";
+  }
 };
+
+const statutLabel = (statut) => {
+  switch (statut) {
+    case "en_attente":
+      return "En attente";
+    case "traitee":
+      return "Traitée";
+    case "en_livraison":
+      return "En livraison";
+    case "livree":
+      return "Livrée";
+    case "refusee":
+      return "Refusée";
+    default:
+      return statut;
+  }
+};
+
+// Only allow cycling through: en_attente → traitee → en_livraison (NO switch from en_livraison to livree)
+const getNextStatut = (statut) => {
+  if (statut === "en_attente") return "traitee";
+  if (statut === "traitee") return "en_livraison";
+  return statut;
+};
+
+const canChangeStatut = (statut) =>
+  statut === "en_attente" || statut === "traitee";
 
 const PharmacyCommandes = () => {
   const [selected, setSelected] = useState(null);
   const [showLivreurModal, setShowLivreurModal] = useState(false);
   const [selectedCommandeIdx, setSelectedCommandeIdx] = useState(null);
   const [assignedLivreur, setAssignedLivreur] = useState({});
-  // Etat is now managed per commande, not as a separate array
   const [commandes, setCommandes] = useState(sampleCommandes);
 
   const handleAssocierClick = (idx) => {
@@ -76,32 +110,24 @@ const PharmacyCommandes = () => {
       ...prev,
       [commandes[selectedCommandeIdx].id]: livreur,
     }));
-    // Update the commande with the assigned livreurId
-    setCommandes((prev) =>
-      prev.map((cmd, i) =>
-        i === selectedCommandeIdx
-          ? { ...cmd, livreurId: livreur.id }
-          : cmd
-      )
-    );
     setShowLivreurModal(false);
     setSelectedCommandeIdx(null);
   };
 
-  // Only allow changing from "non livré" to "en cours"
-  const handleEtatChange = (idx) => {
+  // Cycle through statut on click
+  const handleStatutChange = (idx) => {
     setCommandes((prev) =>
       prev.map((cmd, i) =>
-        i === idx && cmd.etat === "non livré"
-          ? { ...cmd, etat: "en cours" }
+        i === idx && canChangeStatut(cmd.statut)
+          ? { ...cmd, statut: getNextStatut(cmd.statut) }
           : cmd
       )
     );
   };
 
   return (
-    <div className="max-w-7xl mx-auto mt-12 bg-white rounded-2xl shadow-lg p-10">
-      <h2 className="text-2xl font-semibold text-[#3d5a40] mb-8 text-left">
+    <div className="w-full mx-auto mt-12 bg-white rounded-2xl shadow-lg p-10">
+      <h2 className="text-3xl font-semibold text-[#3d5a40] mb-8 text-left">
         Commandes
       </h2>
       <div>
@@ -114,7 +140,7 @@ const PharmacyCommandes = () => {
               <th className="py-3 px-4 text-left font-bold text-[#3d5a40] text-lg">Adresse</th>
               <th className="py-3 px-4 text-left font-bold text-[#3d5a40] text-lg">Date</th>
               <th className="py-3 px-4 text-left font-bold text-[#3d5a40] text-lg">Total</th>
-              <th className="py-3 px-10 text-left font-bold text-[#3d5a40] text-lg w-56">Etat</th>
+              <th className="py-3 px-10 text-left font-bold text-[#3d5a40] text-lg w-56">Statut</th>
               <th className="py-3 px-4 text-left font-bold text-[#3d5a40] text-lg">Actions</th>
               <th className="py-3 px-4 text-left font-bold text-[#3d5a40] text-lg">Livreur</th>
             </tr>
@@ -132,18 +158,13 @@ const PharmacyCommandes = () => {
                 <td className="py-3 px-4">{cmd.total} DA</td>
                 <td className="py-3 px-10 w-56">
                   <span
-                    className={
-                      etatColor(cmd.etat) +
-                      " flex items-center justify-center"
-                    }
-                    style={{ cursor: cmd.etat === "non livré" ? "pointer" : "default" }}
+                    className={statutColor(cmd.statut) + " flex items-center justify-center"}
+                    style={{ cursor: canChangeStatut(cmd.statut) ? "pointer" : "default" }}
                     onClick={() => {
-                      if (cmd.etat === "non livré") handleEtatChange(idx);
+                      if (canChangeStatut(cmd.statut)) handleStatutChange(idx);
                     }}
                   >
-                    {cmd.etat === "en cours"
-                      ? "Acceptée"
-                      : cmd.etat.charAt(0).toUpperCase() + cmd.etat.slice(1)}
+                    {statutLabel(cmd.statut)}
                   </span>
                 </td>
                 <td className="py-3 px-4 w-40">
@@ -163,7 +184,7 @@ const PharmacyCommandes = () => {
                     </span>
                   ) : (
                     <button
-                      className="bg-[#FFD600] text-[#222] font-bold rounded-lg px-4 py-2 shadow hover:bg-yellow-400 transition flex items-center gap-2"
+                      className="bg-yellow-500 text-[#222] font-bold rounded-lg px-4 py-2 shadow hover:bg-yellow-400 transition flex items-center gap-2"
                       onClick={() => handleAssocierClick(idx)}
                     >
                       <FaUserPlus /> Associer un livreur
