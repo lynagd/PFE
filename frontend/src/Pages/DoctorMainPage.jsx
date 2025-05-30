@@ -9,7 +9,8 @@ const DoctorMainPage = () => (
     <Route path="/profile" element={<DoctorProfilePage />} />
     <Route path="/patients" element={<DoctorPatientsPage />} />
     <Route path="/parametres" element={<DoctorParametresPage />} />
-    <Route path="*" element={<Navigate to="/doctor/profile" />} />
+    {/* Redirect to patients page by default */}
+    <Route path="*" element={<Navigate to="/doctor/patients" />} />
   </Routes>
 );
 

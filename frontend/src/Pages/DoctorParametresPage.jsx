@@ -1,15 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 import DoctorHeader from "../components/doctor/DoctorHeader";
 import DoctorParametres from "../components/doctor/DoctorParametres";
 
 const DoctorParametresPage = () => {
+  const location = useLocation();
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [passwordFields, setPasswordFields] = useState({
     current: "",
     new: "",
     confirm: ""
   });
+
+  useEffect(() => {
+    if (location.state && location.state.openPassword) {
+      setShowPasswordForm(true);
+    }
+  }, [location.state]);
 
   const handlePasswordChange = (e) => {
     setPasswordFields({ ...passwordFields, [e.target.name]: e.target.value });

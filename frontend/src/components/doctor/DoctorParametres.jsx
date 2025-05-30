@@ -9,23 +9,8 @@ const DoctorParametres = ({
 }) => (
   <div className="bg-[#faf8f3] rounded-2xl shadow-none px-12 py-10 w-full max-w-4xl flex flex-col items-stretch ml-0">
     <h2 className="text-xl font-bold text-khder mb-6">Paramètres</h2>
-    {!showPasswordForm ? (
-      <div className="flex flex-col gap-4">
-        <button
-          className="bg-khder text-white font-semibold rounded-lg py-3 px-8 shadow hover:bg-[#2d3d2a] transition w-auto self-start"
-          type="button"
-          onClick={() => setShowPasswordForm(true)}
-        >
-          Changer le mot de passe
-        </button>
-        <button
-          className="bg-red-100 text-red-600 font-semibold rounded-lg py-3 px-8 shadow hover:bg-red-200 transition w-auto self-start"
-          type="button"
-        >
-          Supprimer mon compte
-        </button>
-      </div>
-    ) : (
+    {/* Only show the password form if triggered from the header */}
+    {showPasswordForm ? (
       <form className="flex flex-col gap-4" onSubmit={handlePasswordSubmit}>
         <div>
           <label className="block text-[#355c3a] font-semibold mb-1">Mot de passe actuel</label>
@@ -73,6 +58,8 @@ const DoctorParametres = ({
           </button>
         </div>
       </form>
+    ) : (
+      <div className="text-gray-500">Aucun paramètre disponible ici.</div>
     )}
     <hr className="my-8" />
   </div>

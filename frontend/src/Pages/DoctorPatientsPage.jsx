@@ -141,7 +141,18 @@ const DoctorPatientsPage = () => {
                 />
               : showAddPatient
                 ? <AddPatientForm
-                    onSave={handleAddPatient}
+                    onPatientAdded={() => {
+                      setShowAddPatient(false);
+                      // Refresh patients list
+                      setLoading(true);
+                      axios.get("/api/patients/")
+                        .then(res => {
+                          const data = res.data.results || res.data.data || res.data;
+                          setPatients(Array.isArray(data) ? data : []);
+                          setLoading(false);
+                        })
+                        .catch(() => setLoading(false));
+                    }}
                     onCancel={() => setShowAddPatient(false)}
                   />
                 : selectedPatient
