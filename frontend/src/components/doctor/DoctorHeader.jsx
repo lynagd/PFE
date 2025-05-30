@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
-import { User, Settings } from "lucide-react";
+import { User, Settings, Users } from "lucide-react";
 
 const DoctorHeader = ({ profile }) => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -54,6 +54,14 @@ const DoctorHeader = ({ profile }) => {
     <header className="w-full bg-[#3d5a40] text-white flex items-center px-8 py-6 shadow z-50 min-h-[90px]">
       <span className="text-2xl font-bold tracking-wide mr-auto">Pharmaconnect</span>
       <nav className="flex items-center gap-2 ml-auto">
+        {/* Patients Button */}
+        <button
+          className="flex items-center px-5 py-2 rounded-lg font-medium transition ml-2 bg-[#355c3a] hover:bg-[#2d3d2a]"
+          onClick={() => navigate("/doctor/patients")}
+        >
+          <Users className="inline mr-1" />
+          Patients
+        </button>
         {/* Profile Dropdown */}
         <div className="relative" ref={profileMenuRef}>
           <button
@@ -122,7 +130,6 @@ const DoctorHeader = ({ profile }) => {
               >
                 Supprimer compte
               </button>
-              {/* Delete popup remains as before */}
               {showDeletePopup && (
                 <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#faf8f3] border border-gray-300 rounded-xl shadow-lg p-6 z-50 w-72">
                   <div className="font-semibold mb-4 text-red-600">Supprimer le compte</div>
